@@ -1,4 +1,8 @@
-const { readBusinessUnit, createBusinessUnit } = require("../models/BusinessUnitModel");
+const {
+  readBusinessUnit,
+  createBusinessUnit,
+  updateBusinessUnit,
+} = require("../models/BusinessUnitModel");
 const { v4: uuidv4 } = require("uuid");
 
 const handleCreateBusinessUnit = async (req, res) => {
@@ -12,7 +16,7 @@ const handleCreateBusinessUnit = async (req, res) => {
   try {
     let result = await createBusinessUnit(payload);
     res.status(200).send({
-      message: `Success add business unit`,
+      message: `Success create business unit`,
       code: result,
     });
   } catch (error) {
@@ -36,7 +40,22 @@ const handleReadBusinessUnit = async (req, res) => {
   }
 };
 
-const handleUpdateBusinessUnit = async (req, res) => {};
+const handleUpdateBusinessUnit = async (req, res) => {
+  const id_business_unit = req.params.id_business_unit;
+  const payload = req.body;
+  try {
+    let result = await updateBusinessUnit(payload, id_business_unit);
+    res.status(200).send({
+      message: `Success update business unit`,
+      code: result,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
 const handleDeleteBusinessUnit = async (req, res) => {};
 
 module.exports = {

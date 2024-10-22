@@ -39,7 +39,27 @@ const readBusinessUnit = async () => {
   }
 };
 
-const updateBusinessUnit = async () => {};
+const updateBusinessUnit = async (payload, id_business_unit) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const [q, v] = updateQuery(
+      "mst_business_unit",
+      payload,
+      { id_business_unit },
+      "code_business_unit"
+    );
+    const result = await client.query(q, v);
+    await client.query(TRANS.COMMIT);
+    return result.rows;
+  } catch (error) {
+    console.log(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 const deleteBusinessUnit = async () => {};
 
