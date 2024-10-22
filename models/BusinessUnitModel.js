@@ -1,6 +1,6 @@
 const db = require("../config/connection");
 const TRANS = require("../config/transaction");
-const { insertQuery, updateQuery } = require("../helper/queryBuilder");
+const { insertQuery, updateQuery, deleteQuery } = require("../helper/queryBuilder");
 
 const createBusinessUnit = async (payload) => {
   const client = await db.connect();
@@ -61,6 +61,21 @@ const updateBusinessUnit = async (payload, id_business_unit) => {
   }
 };
 
-const deleteBusinessUnit = async () => {};
+const deleteBusinessUnit = async (id_business_unit) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const [q, v] = deleteQuery("mst_business_unit", { id_business_unit });
+    const result = await client.query(q, v);
+    await client.query(TRANS.COMMIT);
+    return result.rows;
+  } catch (error) {
+    console.log(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 module.exports = { createBusinessUnit, readBusinessUnit, updateBusinessUnit, deleteBusinessUnit };

@@ -2,6 +2,7 @@ const {
   readBusinessUnit,
   createBusinessUnit,
   updateBusinessUnit,
+  deleteBusinessUnit,
 } = require("../models/BusinessUnitModel");
 const { v4: uuidv4 } = require("uuid");
 
@@ -56,7 +57,20 @@ const handleUpdateBusinessUnit = async (req, res) => {
   }
 };
 
-const handleDeleteBusinessUnit = async (req, res) => {};
+const handleDeleteBusinessUnit = async (req, res) => {
+  const id_business_unit = req.params.id_business_unit;
+  try {
+    let result = await deleteBusinessUnit(id_business_unit);
+    res.status(200).send({
+      message: `Success delete business unit`,
+      id: id_business_unit,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
   handleCreateBusinessUnit,
