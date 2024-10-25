@@ -6,12 +6,12 @@ const createBusinessUnit = async (payload) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = insertQuery("mst_business_unit", payload, "code_business_unit");
+    const [q, v] = insertQuery("mst_business_unit", payload, "code");
     const result = await client.query(q, v);
     await client.query(TRANS.COMMIT);
-    return result.rows;
+    return result.rows[0].code;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     await client.query(TRANS.ROLLBACK);
     throw error;
   } finally {
@@ -31,7 +31,7 @@ const readBusinessUnit = async () => {
     await client.query(TRANS.COMMIT);
     return result.rows;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     await client.query(TRANS.ROLLBACK);
     throw error;
   } finally {
@@ -39,21 +39,17 @@ const readBusinessUnit = async () => {
   }
 };
 
-const updateBusinessUnit = async (payload, id_business_unit) => {
+const updateBusinessUnit = async (payload, id) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = updateQuery(
-      "mst_business_unit",
-      payload,
-      { id_business_unit },
-      "code_business_unit"
-    );
+    const [q, v] = updateQuery("mst_business_unit", payload, { id }, "code");
     const result = await client.query(q, v);
+    if (result.rowCount === 0) throw new Error(`ID ${id} not exist`);
     await client.query(TRANS.COMMIT);
-    return result.rows;
+    return result.rows[0].code;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     await client.query(TRANS.ROLLBACK);
     throw error;
   } finally {
@@ -61,16 +57,18 @@ const updateBusinessUnit = async (payload, id_business_unit) => {
   }
 };
 
-const deleteBusinessUnit = async (id_business_unit) => {
+const deleteBusinessUnit = async (id) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = deleteQuery("mst_business_unit", { id_business_unit });
+    const [q, v] = deleteQuery("mst_business_unit", { id });
     const result = await client.query(q, v);
+    if (result.rowCount === 0) throw new Error(`ID ${id} not exist`);
     await client.query(TRANS.COMMIT);
-    return result.rows;
+    console.log(result);
+    return id;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     await client.query(TRANS.ROLLBACK);
     throw error;
   } finally {

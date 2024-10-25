@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get("/", handleReadBusinessUnit);
 router.post("/", handleCreateBusinessUnit);
-router.patch("/:id_business_unit", handleUpdateBusinessUnit);
-router.delete("/:id_business_unit", handleDeleteBusinessUnit);
+router.patch("/:id", handleUpdateBusinessUnit);
+router.delete("/:id", handleDeleteBusinessUnit);
 
 module.exports = router;

@@ -8,9 +8,9 @@ const { v4: uuidv4 } = require("uuid");
 
 const handleCreateBusinessUnit = async (req, res) => {
   const payload = {
-    id_business_unit: uuidv4(),
-    code_business_unit: req.body.code_business_unit,
-    name_business_unit: req.body.name_business_unit,
+    id: uuidv4(),
+    code: req.body.code,
+    name: req.body.name,
     is_active: req.body.is_active,
   };
 
@@ -42,10 +42,10 @@ const handleReadBusinessUnit = async (req, res) => {
 };
 
 const handleUpdateBusinessUnit = async (req, res) => {
-  const id_business_unit = req.params.id_business_unit;
+  const id = req.params.id;
   const payload = req.body;
   try {
-    let result = await updateBusinessUnit(payload, id_business_unit);
+    let result = await updateBusinessUnit(payload, id);
     res.status(200).send({
       message: `Success update business unit`,
       code: result,
@@ -58,12 +58,12 @@ const handleUpdateBusinessUnit = async (req, res) => {
 };
 
 const handleDeleteBusinessUnit = async (req, res) => {
-  const id_business_unit = req.params.id_business_unit;
+  const id = req.params.id;
   try {
-    let result = await deleteBusinessUnit(id_business_unit);
+    let result = await deleteBusinessUnit(id);
     res.status(200).send({
       message: `Success delete business unit`,
-      id: id_business_unit,
+      id: id,
     });
   } catch (error) {
     res.status(500).send({
