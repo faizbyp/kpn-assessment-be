@@ -9,8 +9,8 @@ const { v4: uuidv4 } = require("uuid");
 const handleCreateBusinessUnit = async (req, res) => {
   const payload = {
     id: uuidv4(),
-    code: req.body.code,
-    name: req.body.name,
+    bu_code: req.body.bu_code,
+    bu_name: req.body.bu_name,
     is_active: req.body.is_active,
   };
 
@@ -18,7 +18,7 @@ const handleCreateBusinessUnit = async (req, res) => {
     let result = await createBusinessUnit(payload);
     res.status(200).send({
       message: `Success create business unit`,
-      code: result,
+      bu_code: result,
     });
   } catch (error) {
     res.status(500).send({
@@ -48,7 +48,7 @@ const handleUpdateBusinessUnit = async (req, res) => {
     let result = await updateBusinessUnit(payload, id);
     res.status(200).send({
       message: `Success update business unit`,
-      code: result,
+      bu_code: result,
     });
   } catch (error) {
     res.status(500).send({
