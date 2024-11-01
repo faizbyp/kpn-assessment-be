@@ -6,10 +6,10 @@ const createBusinessUnit = async (payload) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = insertQuery("mst_business_unit", payload, "code");
+    const [q, v] = insertQuery("mst_business_unit", payload, "bu_code");
     const result = await client.query(q, v);
     await client.query(TRANS.COMMIT);
-    return result.rows[0].code;
+    return result.rows[0].bu_code;
   } catch (error) {
     console.error(error);
     await client.query(TRANS.ROLLBACK);
