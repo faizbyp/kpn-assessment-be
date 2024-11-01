@@ -1,8 +1,12 @@
 const db = require("../config/connection");
 const TRANS = require("../config/transaction");
-const { insertQuery, updateQuery, deleteQuery } = require("../helper/queryBuilder");
+const {
+  insertQuery,
+  updateQuery,
+  deleteQuery,
+} = require("../helper/queryBuilder");
 
-const createBusinessUnit = async (payload) => {
+export const handleCreateBusinessUnit = async (payload: any) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -19,7 +23,7 @@ const createBusinessUnit = async (payload) => {
   }
 };
 
-const readBusinessUnit = async () => {
+export const handleReadBusinessUnit = async () => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -39,7 +43,7 @@ const readBusinessUnit = async () => {
   }
 };
 
-const updateBusinessUnit = async (payload, id) => {
+export const handleUpdateBusinessUnit = async (payload: any, id: any) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -57,7 +61,7 @@ const updateBusinessUnit = async (payload, id) => {
   }
 };
 
-const deleteBusinessUnit = async (id) => {
+export const handleDeleteBusinessUnit = async (id: any) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -75,5 +79,3 @@ const deleteBusinessUnit = async (id) => {
     client.release();
   }
 };
-
-module.exports = { createBusinessUnit, readBusinessUnit, updateBusinessUnit, deleteBusinessUnit };
