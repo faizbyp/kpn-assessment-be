@@ -47,11 +47,11 @@ export const handleUpdateBusinessUnit = async (payload: any, id: any) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = updateQuery("mst_business_unit", payload, { id }, "code");
+    const [q, v] = updateQuery("mst_business_unit", payload, { id }, "bu_code");
     const result = await client.query(q, v);
     if (result.rowCount === 0) throw new Error(`ID ${id} not exist`);
     await client.query(TRANS.COMMIT);
-    return result.rows[0].code;
+    return result.rows[0].bu_code;
   } catch (error) {
     console.error(error);
     await client.query(TRANS.ROLLBACK);
