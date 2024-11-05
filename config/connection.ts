@@ -1,10 +1,11 @@
-const { Pool } = require("pg");
+import pg from "pg";
+const { Pool } = pg;
 
 const prodSettings = {
   host: process.env.PGHOST,
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
+  port: Number(process.env.PGPORT),
   database: process.env.PGDATABASE,
   timezone: "+00:00",
   idleTimeoutMillis: 3000,
@@ -19,7 +20,7 @@ const devSettings = {
   host: process.env.PGHOST,
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
+  port: Number(process.env.PGPORT),
   database: process.env.PGDATABASE,
   timezone: "+00:00",
   idleTimeoutMillis: 3000,
@@ -30,6 +31,4 @@ const devSettings = {
   // },
 };
 
-const pool = new Pool(process.env.NODE_ENV === "production" ? prodSettings : devSettings);
-
-module.exports = pool;
+export const db = new Pool(process.env.NODE_ENV === "production" ? prodSettings : devSettings);

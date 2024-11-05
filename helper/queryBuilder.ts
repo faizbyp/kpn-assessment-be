@@ -1,4 +1,8 @@
-const insertQuery = (table, values, returning = null) => {
+export const insertQuery = (
+  table: string,
+  values: any,
+  returning: string | null = null
+): [string, string[]] => {
   let valuesArray = [];
 
   // Check if values is an array or a single object
@@ -10,9 +14,9 @@ const insertQuery = (table, values, returning = null) => {
     throw new Error("Values should be an object or an array of objects.");
   }
 
-  let columnArray = [];
-  let payloadArray = [];
-  let valueArray = [];
+  let columnArray: string[] = [];
+  let payloadArray: string[] = [];
+  let valueArray: string[] = [];
 
   // Assuming the first object in the array has all the columns we need
   Object.keys(valuesArray[0]).forEach((key) => {
@@ -21,7 +25,7 @@ const insertQuery = (table, values, returning = null) => {
 
   // Build the payload and value arrays for multiple rows
   valuesArray.forEach((valueObj, rowIndex) => {
-    let rowPlaceholders = [];
+    let rowPlaceholders: string[] = [];
     Object.keys(valueObj).forEach((key, colIndex) => {
       rowPlaceholders.push(`$${rowIndex * columnArray.length + colIndex + 1}`);
       valueArray.push(valueObj[key]);
@@ -41,9 +45,9 @@ const insertQuery = (table, values, returning = null) => {
   return [query, valueArray];
 };
 
-const deleteQuery = (table, where) => {
+export const deleteQuery = (table: string, where: any): [string, string[]] => {
   let query = "";
-  let valueArray = [];
+  let valueArray: string[] = [];
   const whereArray = Object.keys(where).map((item, index) => {
     valueArray.push(where[item]);
     return `${item} = $${index + 1}`;
@@ -52,14 +56,19 @@ const deleteQuery = (table, where) => {
   return [query, valueArray];
 };
 
-const updateQuery = (table, value, where, returning = null) => {
-  let valueArray = [];
-  let setArray = [];
-  let whereArray = [];
+export const updateQuery = (
+  table: string,
+  value: any,
+  where: any,
+  returning: string | null = null
+): [string, string[]] => {
+  let valueArray: string[] = [];
+  let setArray: string[] = [];
+  let whereArray: string[] = [];
   Object.keys(value).forEach((key, ix) => {
     setArray.push(key + ` = $${ix + 1}`);
   });
-  Object.values(value).forEach((v) => {
+  Object.values(value).forEach((v: any) => {
     valueArray.push(v);
   });
   Object.keys(where).forEach((key) => {
@@ -68,16 +77,10 @@ const updateQuery = (table, value, where, returning = null) => {
   let whereString = whereArray.join(" AND ");
   const setString = setArray.join(", ");
   let query = `UPDATE ${table} SET ${setString} WHERE ${whereString}`;
-  if (returning != null) {
+  if (returning !== null) {
     query += ` RETURNING ${returning}`;
   } else {
     query += " ;";
   }
   return [query, valueArray];
-};
-
-module.exports = {
-  insertQuery,
-  deleteQuery,
-  updateQuery,
 };

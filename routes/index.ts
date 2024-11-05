@@ -1,9 +1,9 @@
 import { Router } from "express";
 const router = Router();
 //import controllers here
-import ExampleController from "@/controllers/ExampleController";
 import BusinessUnit from "./BusinessUnit";
 import Auth from "./Auth";
+
 //@using router
 // router.use('/api/<endpoint>', <controller>)
 router.use("/api/bu", BusinessUnit);

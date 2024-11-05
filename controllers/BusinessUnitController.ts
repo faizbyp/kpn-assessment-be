@@ -1,12 +1,13 @@
-const {
-  readBusinessUnit,
+import {
   createBusinessUnit,
-  updateBusinessUnit,
   deleteBusinessUnit,
-} = require("../models/BusinessUnitModel");
-const { v4: uuidv4 } = require("uuid");
+  getBusinessUnit,
+  updateBusinessUnit,
+} from "@/models/BusinessUnitModel";
+import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 
-const handleCreateBusinessUnit = async (req, res) => {
+export const handleCreateBusinessUnit = async (req: Request, res: Response) => {
   const payload = {
     id: uuidv4(),
     bu_code: req.body.bu_code,
@@ -20,28 +21,28 @@ const handleCreateBusinessUnit = async (req, res) => {
       message: `Success create business unit`,
       bu_code: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send({
       message: error.message,
     });
   }
 };
 
-const handleReadBusinessUnit = async (req, res) => {
+export const handleGetBusinessUnit = async (_req: Request, res: Response) => {
   try {
-    let result = await readBusinessUnit();
+    let result = await getBusinessUnit();
     res.status(200).send({
       message: `Success get business unit`,
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send({
       message: error.message,
     });
   }
 };
 
-const handleUpdateBusinessUnit = async (req, res) => {
+export const handleUpdateBusinessUnit = async (req: Request, res: Response) => {
   const id = req.params.id;
   const payload = req.body;
   try {
@@ -50,14 +51,14 @@ const handleUpdateBusinessUnit = async (req, res) => {
       message: `Success update business unit`,
       bu_code: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send({
       message: error.message,
     });
   }
 };
 
-const handleDeleteBusinessUnit = async (req, res) => {
+export const handleDeleteBusinessUnit = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     let result = await deleteBusinessUnit(id);
@@ -65,16 +66,9 @@ const handleDeleteBusinessUnit = async (req, res) => {
       message: `Success delete business unit`,
       id: id,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send({
       message: error.message,
     });
   }
-};
-
-module.exports = {
-  handleCreateBusinessUnit,
-  handleReadBusinessUnit,
-  handleUpdateBusinessUnit,
-  handleDeleteBusinessUnit,
 };
