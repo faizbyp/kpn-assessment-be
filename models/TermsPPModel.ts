@@ -26,11 +26,11 @@ export const getTermsPP = async () => {
   }
 };
 
-export const updateTerms = async (payload: TermsValues, id: string) => {
+export const updateTermsPP = async (payload: TermsValues, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
-    const [q, v] = updateQuery("mst_business_unit", payload, { id }, "id");
+    const [q, v] = updateQuery("mst_term_pp", payload, { id }, "id");
     const result = await client.query(q, v);
     await client.query(TRANS.COMMIT);
     return result.rows[0].id;
