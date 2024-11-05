@@ -1,5 +1,8 @@
 import pg from "pg";
-const { Pool } = pg;
+const { Pool, types } = pg;
+
+// Make DATE return date only
+types.setTypeParser(types.builtins.DATE, (value) => value);
 
 const prodSettings = {
   host: process.env.PGHOST,
