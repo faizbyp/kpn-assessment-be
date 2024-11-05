@@ -6,7 +6,25 @@ interface TermsValues {
   name: string;
 }
 
-export const getTermsPP = async () => {};
+export const getTermsPP = async () => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const result = await client.query(
+      `
+    SELECT * FROM mst_term_pp
+    `
+    );
+    await client.query(TRANS.COMMIT);
+    return result.rows;
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 export const updateTerms = async (payload: TermsValues, id: string) => {
   const client = await db.connect();
