@@ -1,11 +1,11 @@
-const OTPGen = require("otp-generator");
-const bcrypt = require("bcryptjs");
-const db = require("../../config/connection");
-const { deleteQuery } = require("../queryBuilder");
+import { db } from "@/config/connection";
+import { compareSync, genSaltSync, hashSync } from "bcryptjs";
+import { generate } from "otp-generator";
+import { deleteQuery } from "../queryBuilder";
 
 const createOTP = () => {
   try {
-    const OTP = OTPGen.generate(6, {
+    const OTP = generate(6, {
       digits: true,
       lowerCaseAlphabets: false,
       upperCaseAlphabets: false,
@@ -13,8 +13,8 @@ const createOTP = () => {
     });
     let validUntil = new Date();
     validUntil.setMinutes(validUntil.getMinutes() + 5);
-    const salt = bcrypt.genSaltSync(10);
-    const encodedOTP = bcrypt.hashSync(OTP, salt);
+    const salt = genSaltSync(10);
+    const encodedOTP = hashSync(OTP, salt);
     return [OTP, encodedOTP, validUntil];
   } catch (error) {
     console.error(error);
@@ -22,7 +22,7 @@ const createOTP = () => {
   }
 };
 
-const validateOTP = async (otpInput, email) => {
+const validateOTP = async (otpInput: string, email: string) => {
   const client = await db.connect();
   try {
     const getOTP = await client.query("SELECT * from otp_trans where email = $1", [email]);
@@ -41,7 +41,7 @@ const validateOTP = async (otpInput, email) => {
       await client.query(cleanTemp, tempValue);
       throw new Error("OTP Expired: Please request again");
     }
-    const compareOTP = bcrypt.compareSync(otpInput, otpHashed);
+    const compareOTP = compareSync(otpInput, otpHashed);
     if (!compareOTP) {
       throw new Error("OTP not valid");
     }
@@ -54,7 +54,7 @@ const validateOTP = async (otpInput, email) => {
   }
 };
 
-const validateToken = async (otpInput, email) => {
+const validateToken = async (otpInput: string, email: string) => {
   const client = await db.connect();
   try {
     const getOTP = await client.query("SELECT * from otp_trans where email = $1", [email]);
@@ -63,7 +63,7 @@ const validateToken = async (otpInput, email) => {
       throw new Error("Please register first");
     }
     const otpHashed = data[0].otp_code;
-    const compareOTP = bcrypt.compareSync(otpInput, otpHashed);
+    const compareOTP = compareSync(otpInput, otpHashed);
     if (!compareOTP) {
       throw new Error("OTP not valid");
     }
@@ -74,10 +74,4 @@ const validateToken = async (otpInput, email) => {
   } finally {
     client.release();
   }
-};
-
-module.exports = {
-  createOTP,
-  validateOTP,
-  validateToken,
 };

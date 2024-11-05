@@ -4,12 +4,15 @@ const router = Router();
 import BusinessUnit from "./BusinessUnit";
 import Auth from "./Auth";
 import TermsPP, { ShortBrief } from "./TermsPP";
+import { hashPassword } from "@/helper/auth/password";
+import AdminWeb from "./AdminWeb";
 
 //@using router
 // router.use('/api/<endpoint>', <controller>)
 router.use("/api/bu", BusinessUnit);
 router.use("/api/terms-pp", TermsPP);
 router.use("/api/short-brief", ShortBrief);
+router.use("/api/admin", AdminWeb);
 router.use("/api/auth", Auth);
 
 router.use("/api/check", (req, res) => {
@@ -17,6 +20,14 @@ router.use("/api/check", (req, res) => {
     message: "Connected",
   });
 });
+
+// router.post("/api/hash", async (req, res) => {
+//   const password = req.body.password;
+//   const hashed = await hashPassword(password);
+//   res.status(200).send({
+//     hashed: hashed,
+//   });
+// });
 
 // router.get("/api/example", Example.exampleMethod);
 

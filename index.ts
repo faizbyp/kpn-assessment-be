@@ -46,8 +46,6 @@ app.get("/*$", (req, res) => {
 //   console.log(`App running on ${process.env.PORT}`);
 // });
 
-const server = https
-  .createServer(servOption, app)
-  .listen(process.env.PORT, () => {
-    console.log(`App running on ${process.env.PORT}`);
-  });
+const server = https.createServer(servOption, app).listen(process.env.PORT, () => {
+  console.log(`App running on ${process.env.PORT}`);
+});
