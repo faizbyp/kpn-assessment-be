@@ -3,12 +3,13 @@ const router = Router();
 //import controllers here
 import BusinessUnit from "./BusinessUnit";
 import Auth from "./Auth";
-import TermsPP from "./TermsPP";
+import TermsPP, { ShortBrief } from "./TermsPP";
 
 //@using router
 // router.use('/api/<endpoint>', <controller>)
 router.use("/api/bu", BusinessUnit);
 router.use("/api/terms-pp", TermsPP);
+router.use("/api/short-brief", ShortBrief);
 router.use("/api/auth", Auth);
 
 router.use("/api/check", (req, res) => {
