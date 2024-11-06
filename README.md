@@ -79,3 +79,35 @@ Use the following prefixes to categorize your commits:
 ## Additional
 
 Add more convention as needed and update this guideline based on the it so other developer could follow along.
+
+## Deployment
+
+1. Create Docker Image based on the environment.
+
+- Development
+
+```bash
+docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:0.0.1beta -f Dockerfile.dev --load .
+```
+
+> The difference between 2 command above is just the environment variable declared inside the `pm2` command flag
+
+2. Test Locally
+
+- Development
+
+```bash
+docker run -p 5000:5000 --env-file .env.development faizbyp/kpn-assessment:x.x.x
+```
+
+3. Push the image to Docker Hub.
+
+4. Ask the infra team to update the deployment image based on the updated tag on Docker Hub.
+
+5. Update deployment log in `README.md`
+
+## Deployment Log
+
+### `0.0.1`
+
+- Deployment for initial showcase to HC

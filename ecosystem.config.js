@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: "assessment_app",
-      script: "index.ts",
+      name: "kpn-assessment",
+      script: "index.js",
       exp_backoff_restart_delay: 100,
     },
   ],

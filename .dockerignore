@@ -1,0 +1,6 @@
+node_modules
+/dist/node_modules
+.git
+.env.wb
+.env.development
+.env.production

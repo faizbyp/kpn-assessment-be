@@ -9,14 +9,14 @@ import path from "path";
 import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
 import fs from "fs";
-import { origins as whitelist } from "@/config/allowedOrigins";
+import { origins as whitelist } from "#dep/config/allowedOrigins";
 import { credentials } from "./middleware/credential";
 import router from "./routes";
 const app = express();
-const servOption = {
-  cert: fs.readFileSync("./ssl/cert.pem"),
-  key: fs.readFileSync("./ssl/key.pem"),
-};
+// const servOption = {
+//   cert: fs.readFileSync("./ssl/cert.pem"),
+//   key: fs.readFileSync("./ssl/key.pem"),
+// };
 
 const corsOption: CorsOptions = {
   origin: function (req, callback) {
@@ -42,10 +42,10 @@ app.get("/*$", (req, res) => {
   res.sendFile(path.join(__dirname, "public/build", "index.html"));
 });
 
-// app.listen(process.env.PORT as unknown as number, "0.0.0.0", () => {
-//   console.log(`App running on ${process.env.PORT}`);
-// });
-
-const server = https.createServer(servOption, app).listen(process.env.PORT, () => {
+app.listen(process.env.PORT as unknown as number, "0.0.0.0", () => {
   console.log(`App running on ${process.env.PORT}`);
 });
+
+// const server = https.createServer(servOption, app).listen(process.env.PORT, () => {
+//   console.log(`App running on ${process.env.PORT}`);
+// });
