@@ -49,7 +49,7 @@ export const handleUpdatePP = async (req: Request, res: Response) => {
   try {
     let result = await updateTermsPP(payload, PP_ID);
     res.status(200).send({
-      message: `Success update short brief`,
+      message: `Success update privacy policy`,
       id: result,
     });
   } catch (error: any) {
