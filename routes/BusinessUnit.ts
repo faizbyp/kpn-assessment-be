@@ -3,7 +3,7 @@ import {
   handleDeleteBusinessUnit,
   handleGetBusinessUnit,
   handleUpdateBusinessUnit,
-} from "@/controllers/BusinessUnitController";
+} from "#dep/controllers/BusinessUnitController";
 import { Router } from "express";
 const BusinessUnit = Router();
 

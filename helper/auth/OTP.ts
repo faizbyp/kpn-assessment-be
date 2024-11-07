@@ -1,4 +1,4 @@
-import { db } from "@/config/connection";
+import { db } from "#dep/config/connection";
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
 import { generate } from "otp-generator";
 import { deleteQuery } from "../queryBuilder";

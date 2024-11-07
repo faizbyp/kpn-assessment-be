@@ -4,7 +4,7 @@ import {
   handleUpdateBrief,
   handleUpdatePP,
   handleUpdateTerms,
-} from "@/controllers/TermsPPController";
+} from "#dep/controllers/TermsPPController";
 import { Router } from "express";
 const TermsPP = Router();
 export const ShortBrief = Router();

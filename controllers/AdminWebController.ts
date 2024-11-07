@@ -1,21 +1,20 @@
-import { loginAdmin } from "@/models/AdminWebModel";
+import { getRefreshToken, loginAdmin } from "#dep/models/AdminWebModel";
 import { Request, Response } from "express";
+import { Secret, sign } from "jsonwebtoken";
 
 export const handleLoginAdmin = async (req: Request, res: Response): Promise<any> => {
   const emailOrUname = req.body.username;
   const password = req.body.password;
   try {
-    const { data, accessToken, refreshToken } = await loginAdmin(emailOrUname, password);
+    const { data, accessToken } = await loginAdmin(emailOrUname, password);
     res.status(200).send({
       message: `Success sign in, welcome ${data.fullname}`,
       data: {
-        name: data.name,
+        fullname: data.fullname,
         username: data.username,
         email: data.email,
-        id_user: data.id_user,
-        id_role: data.id_role,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        id_user: data.id,
+        access_token: accessToken,
       },
     });
   } catch (error: any) {
@@ -23,5 +22,19 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
       return res.status(400).send({ message: error.message });
     }
     res.status(500).send({ message: error.message });
+  }
+};
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+  const id_user = req.body.id_user;
+  try {
+    const token = getRefreshToken(id_user);
+    res.status(200).send({
+      access_token: token,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
   }
 };

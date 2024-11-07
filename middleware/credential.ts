@@ -1,11 +1,7 @@
-import { origins as allowedOrigin } from "@/config/allowedOrigins";
+import { origins as allowedOrigin } from "#dep/config/allowedOrigins";
 import { Request, Response, NextFunction } from "express";
 
-export function credentials(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function credentials(req: Request, res: Response, next: NextFunction): void {
   const origin = req.headers.origin;
   if (origin && allowedOrigin.includes(origin)) {
     res.header("Access-Control-Allow-Credentials", "true");

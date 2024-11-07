@@ -1,4 +1,9 @@
-import { getShortBrief, getTermsPP, updateShortBrief, updateTermsPP } from "@/models/TermsPPModel";
+import {
+  getShortBrief,
+  getTermsPP,
+  updateShortBrief,
+  updateTermsPP,
+} from "#dep/models/TermsPPModel";
 import { Request, Response } from "express";
 
 const TERMS_ID = "d1d3d3bd-f06c-4dca-90fb-7ef043c6508b";

@@ -1,22 +1,15 @@
-import { axiosDarwin } from "@/config/axiosDarwin";
-import { decoderDarwin } from "@/helper/auth/DarwinDecoder";
+import { axiosDarwin } from "#dep/config/axiosDarwin";
+import { decoderDarwin } from "#dep/helper/auth/DarwinDecoder";
 import { isAxiosError } from "axios";
 import { Request, Response } from "express";
 
 const AuthController = {
-  VerifyDarwinToken: async (
-    req: Request<{ payload: string }>,
-    res: Response
-  ) => {
+  VerifyDarwinToken: async (req: Request<{ payload: string }>, res: Response) => {
     const { encoded_payload, token_client } = req.body;
     let token_auth = token_client;
     let firstname, email;
     if (encoded_payload) {
-      const {
-        firstname: fname,
-        email: em,
-        token,
-      } = decoderDarwin(encoded_payload);
+      const { firstname: fname, email: em, token } = decoderDarwin(encoded_payload);
       firstname = fname;
       email = em;
       token_auth = token;

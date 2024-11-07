@@ -3,7 +3,7 @@ import {
   deleteBusinessUnit,
   getBusinessUnit,
   updateBusinessUnit,
-} from "@/models/BusinessUnitModel";
+} from "#dep/models/BusinessUnitModel";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 

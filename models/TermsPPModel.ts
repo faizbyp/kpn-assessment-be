@@ -1,6 +1,6 @@
-import { db } from "@/config/connection";
-import { TRANSACTION as TRANS } from "@/config/transaction";
-import { updateQuery } from "@/helper/queryBuilder";
+import { db } from "#dep/config/connection";
+import { TRANSACTION as TRANS } from "#dep/config/transaction";
+import { updateQuery } from "#dep/helper/queryBuilder";
 
 interface TermsValues {
   name: string;

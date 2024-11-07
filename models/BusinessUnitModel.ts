@@ -1,6 +1,6 @@
-import { db } from "@/config/connection";
-import { TRANSACTION as TRANS } from "@/config/transaction";
-import { deleteQuery, insertQuery, updateQuery } from "@/helper/queryBuilder";
+import { db } from "#dep/config/connection";
+import { TRANSACTION as TRANS } from "#dep/config/transaction";
+import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
 
 export const createBusinessUnit = async (payload: any) => {
   const client = await db.connect();
@@ -39,7 +39,7 @@ export const getBusinessUnit = async () => {
   }
 };
 
-export const updateBusinessUnit = async (payload: any, id: any) => {
+export const updateBusinessUnit = async (payload: any, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -57,7 +57,7 @@ export const updateBusinessUnit = async (payload: any, id: any) => {
   }
 };
 
-export const deleteBusinessUnit = async (id: any) => {
+export const deleteBusinessUnit = async (id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
