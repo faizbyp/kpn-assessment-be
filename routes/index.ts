@@ -4,16 +4,18 @@ const router = Router();
 import BusinessUnit from "./BusinessUnit";
 import Auth from "./Auth";
 import TermsPP, { ShortBrief } from "./TermsPP";
-import { hashPassword } from "@/helper/auth/password";
+import { hashPassword } from "#dep/helper/auth/password";
 import AdminWeb from "./AdminWeb";
+import Series from "./Series";
 
-//@using router
+//#depusing router
 // router.use('/api/<endpoint>', <controller>)
 router.use("/api/bu", BusinessUnit);
 router.use("/api/terms-pp", TermsPP);
 router.use("/api/short-brief", ShortBrief);
 router.use("/api/admin", AdminWeb);
 router.use("/api/auth", Auth);
+router.use("/api/series", Series);
 
 router.use("/api/check", (req, res) => {
   res.status(200).send({
