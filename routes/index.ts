@@ -7,6 +7,7 @@ import TermsPP, { ShortBrief } from "./TermsPP";
 import { hashPassword } from "#dep/helper/auth/password";
 import AdminWeb from "./AdminWeb";
 import Series from "./Series";
+import Criteria from "./Criteria";
 
 //#depusing router
 // router.use('/api/<endpoint>', <controller>)
@@ -16,6 +17,7 @@ router.use("/api/short-brief", ShortBrief);
 router.use("/api/admin", AdminWeb);
 router.use("/api/auth", Auth);
 router.use("/api/series", Series);
+router.use("/api/criteria", Criteria);
 
 router.use("/api/check", (req, res) => {
   res.status(200).send({
