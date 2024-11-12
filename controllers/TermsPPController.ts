@@ -4,6 +4,7 @@ import {
   updateShortBrief,
   updateTermsPP,
 } from "#dep/models/TermsPPModel";
+import { BriefRequest, TermsPPRequest } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 
 const TERMS_ID = "d1d3d3bd-f06c-4dca-90fb-7ef043c6508b";
@@ -35,7 +36,12 @@ export const handleGetTermsPP = async (_req: Request, res: Response) => {
 };
 
 export const handleUpdateTerms = async (req: Request, res: Response) => {
-  const payload = req.body;
+  const today = new Date();
+  const payload: TermsPPRequest = {
+    name: req.body.name,
+    updated_by: req.body.updated_by,
+    updated_date: today,
+  };
   try {
     let result = await updateTermsPP(payload, TERMS_ID);
     res.status(200).send({
@@ -50,7 +56,12 @@ export const handleUpdateTerms = async (req: Request, res: Response) => {
 };
 
 export const handleUpdatePP = async (req: Request, res: Response) => {
-  const payload = req.body;
+  const today = new Date();
+  const payload: TermsPPRequest = {
+    name: req.body.name,
+    updated_by: req.body.updated_by,
+    updated_date: today,
+  };
   try {
     let result = await updateTermsPP(payload, PP_ID);
     res.status(200).send({
@@ -65,12 +76,11 @@ export const handleUpdatePP = async (req: Request, res: Response) => {
 };
 
 export const handleGetBrief = async (req: Request, res: Response) => {
-  const payload = req.body;
   try {
     let result = await getShortBrief();
     res.status(200).send({
       message: `Success get short brief`,
-      short_brief_name: result.short_brief_name,
+      data: result,
     });
   } catch (error: any) {
     res.status(500).send({
@@ -80,7 +90,12 @@ export const handleGetBrief = async (req: Request, res: Response) => {
 };
 
 export const handleUpdateBrief = async (req: Request, res: Response) => {
-  const payload = req.body;
+  const today = new Date();
+  const payload: BriefRequest = {
+    short_brief_name: req.body.short_brief_name,
+    updated_by: req.body.updated_by,
+    updated_date: today,
+  };
   try {
     let result = await updateShortBrief(payload, BRIEF_ID);
     res.status(200).send({

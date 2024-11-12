@@ -1,14 +1,7 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { updateQuery } from "#dep/helper/queryBuilder";
-
-interface TermsValues {
-  name: string;
-}
-
-interface BriefValues {
-  short_brief_name: string;
-}
+import { BriefRequest, TermsPPRequest } from "#dep/types/MasterDataTypes";
 
 export const getTermsPP = async () => {
   const client = await db.connect();
@@ -30,7 +23,7 @@ export const getTermsPP = async () => {
   }
 };
 
-export const updateTermsPP = async (payload: TermsValues, id: string) => {
+export const updateTermsPP = async (payload: TermsPPRequest, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -66,7 +59,7 @@ export const getShortBrief = async () => {
   }
 };
 
-export const updateShortBrief = async (payload: BriefValues, id: string) => {
+export const updateShortBrief = async (payload: BriefRequest, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);

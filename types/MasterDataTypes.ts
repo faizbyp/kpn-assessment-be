@@ -41,3 +41,15 @@ export type FunctionMenuRequest = {
   created_by: string;
   created_date: Date;
 };
+
+export type TermsPPRequest = {
+  name: string;
+  updated_by: string;
+  updated_date: Date;
+};
+
+export type BriefRequest = {
+  short_brief_name: string;
+  updated_by: string;
+  updated_date: Date;
+};
