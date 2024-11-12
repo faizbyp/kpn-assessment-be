@@ -8,6 +8,7 @@ import { hashPassword } from "#dep/helper/auth/password";
 import AdminWeb from "./AdminWeb";
 import Series from "./Series";
 import Criteria from "./Criteria";
+import FunctionMenu from "./FunctionMenu";
 
 //#depusing router
 // router.use('/api/<endpoint>', <controller>)
@@ -18,6 +19,7 @@ router.use("/api/admin", AdminWeb);
 router.use("/api/auth", Auth);
 router.use("/api/series", Series);
 router.use("/api/criteria", Criteria);
+router.use("/api/function-menu", FunctionMenu);
 
 router.use("/api/check", (req, res) => {
   res.status(200).send({
