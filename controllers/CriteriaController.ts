@@ -1,5 +1,5 @@
 import { createCriteria, deleteCriteria, getCriteria } from "#dep/models/CriteriaModel";
-import { CriteriaGroup, CriteriaRequest } from "#dep/types/CriteriaTypes";
+import { CriteriaGroup, CriteriaRequest } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
@@ -7,7 +7,7 @@ export const handleCreateCriteria = async (req: Request, res: Response) => {
   const payload = req.body;
   const today = new Date();
   const groupId = uuidv4();
-  const creator = payload.id_user;
+  const creator = payload.user_id;
 
   const groupPayload: CriteriaGroup = {
     id: groupId,

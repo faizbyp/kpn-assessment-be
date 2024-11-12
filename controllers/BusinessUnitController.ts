@@ -8,11 +8,14 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
 export const handleCreateBusinessUnit = async (req: Request, res: Response) => {
+  const today = new Date();
   const payload = {
     id: uuidv4(),
     bu_code: req.body.bu_code,
     bu_name: req.body.bu_name,
     is_active: req.body.is_active,
+    created_by: req.body.created_by,
+    created_date: today,
   };
 
   try {

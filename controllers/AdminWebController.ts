@@ -13,7 +13,7 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
         fullname: data.fullname,
         username: data.username,
         email: data.email,
-        id_user: data.id,
+        user_id: data.id,
         access_token: accessToken,
       },
     });
@@ -26,9 +26,9 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
 };
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
-  const id_user = req.body.id_user;
+  const user_id = req.body.user_id;
   try {
-    const token = getRefreshToken(id_user);
+    const token = getRefreshToken(user_id);
     res.status(200).send({
       access_token: token,
     });

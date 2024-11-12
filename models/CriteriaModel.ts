@@ -1,7 +1,7 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
-import { Criteria, CriteriaGroup } from "#dep/types/CriteriaTypes";
+import { Criteria, CriteriaGroup } from "#dep/types/MasterDataTypes";
 
 export const createCriteria = async (groupPayload: CriteriaGroup, criteriaPayload: Criteria) => {
   const client = await db.connect();
@@ -69,6 +69,32 @@ export const deleteCriteria = async (id: string) => {
     await client.query(TRANS.COMMIT);
     console.log(categoryResult);
     return categoryResult.rows[0].value_name;
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const editCriteria = async (groupPayload: CriteriaGroup, criteriaPayload: Criteria) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+
+    const [groupQ, groupV] = updateQuery(
+      "mst_value",
+      groupPayload,
+      { id: groupPayload.id },
+      "value_name"
+    );
+    const groupResult = await client.query(groupQ, groupV);
+    const [criteriaQ, criteriaV] = updateQuery("mst_criteria", criteriaPayload, "criteria_name");
+    const criteriaResult = await client.query(criteriaQ, criteriaV);
+
+    await client.query(TRANS.COMMIT);
+    return groupResult.rows[0].value_name;
   } catch (error) {
     console.error(error);
     await client.query(TRANS.ROLLBACK);

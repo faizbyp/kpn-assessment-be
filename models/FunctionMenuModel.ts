@@ -1,7 +1,7 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
-import { FunctionMenuRequest } from "#dep/types/FunctionMenuTypes";
+import { FunctionMenuRequest } from "#dep/types/MasterDataTypes";
 
 export const getFunctionMenu = async () => {
   const client = await db.connect();

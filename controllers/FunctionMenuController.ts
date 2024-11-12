@@ -28,7 +28,7 @@ export const handleCreateFunctionMenu = async (req: Request, res: Response) => {
     fm_code: req.body.fm_code,
     fm_name: req.body.fm_name,
     is_active: req.body.is_active,
-    created_by: req.body.id_user,
+    created_by: req.body.user_id,
     created_date: today,
   };
 

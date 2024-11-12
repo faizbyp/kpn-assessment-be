@@ -1,8 +1,9 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
+import { BURequest } from "#dep/types/MasterDataTypes";
 
-export const createBusinessUnit = async (payload: any) => {
+export const createBusinessUnit = async (payload: BURequest) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -39,7 +40,7 @@ export const getBusinessUnit = async () => {
   }
 };
 
-export const updateBusinessUnit = async (payload: any, id: string) => {
+export const updateBusinessUnit = async (payload: BURequest, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);

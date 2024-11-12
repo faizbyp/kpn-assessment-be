@@ -22,7 +22,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         email: data.email,
         username: data.username,
         fullname: data.fullname,
-        id_user: data.id,
+        user_id: data.id,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: "5m" }
@@ -33,7 +33,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         email: data.email,
         username: data.username,
         fullname: data.fullname,
-        id_user: data.id,
+        user_id: data.id,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: "6h" }
