@@ -44,12 +44,13 @@ export const handleGetCriteria = async (_req: Request, res: Response) => {
     const result = await getCriteria();
     const newResult = Object.values(
       result.reduce((acc, item) => {
-        const { value_code, value_name, ...criteria } = item;
+        const { value_code, value_name, value_id, ...criteria } = item;
 
         if (!acc[value_code]) {
           acc[value_code] = {
             value_code,
             value_name,
+            value_id,
             criteria: [],
           };
         }

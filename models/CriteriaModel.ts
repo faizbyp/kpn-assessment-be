@@ -30,7 +30,7 @@ export const getCriteria = async () => {
     await client.query(TRANS.BEGIN);
     const result = await client.query(
       `
-    SELECT cr.*, v.value_code, v.value_name
+    SELECT cr.*, v.value_code, v.value_name, v.id AS value_id
     FROM mst_criteria cr
     JOIN mst_value v ON cr.category_fk = v.id
     ORDER BY cr.minimum_score ASC
