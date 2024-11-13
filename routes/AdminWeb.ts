@@ -1,7 +1,8 @@
-import { handleLoginAdmin } from "#dep/controllers/AdminWebController";
+import { handleLoginAdmin, refreshAccessToken } from "#dep/controllers/AdminWebController";
 import { Router } from "express";
 const AdminWeb = Router();
 
 AdminWeb.post("/login", handleLoginAdmin);
+AdminWeb.post("/get-token", refreshAccessToken);
 
 export default AdminWeb;

@@ -9,17 +9,18 @@ import AdminWeb from "./AdminWeb";
 import Series from "./Series";
 import Criteria from "./Criteria";
 import FunctionMenu from "./FunctionMenu";
+import { isAuth } from "#dep/middleware/auth";
 
 //#depusing router
 // router.use('/api/<endpoint>', <controller>)
-router.use("/api/bu", BusinessUnit);
-router.use("/api/terms-pp", TermsPP);
-router.use("/api/short-brief", ShortBrief);
-router.use("/api/admin", AdminWeb);
 router.use("/api/auth", Auth);
-router.use("/api/series", Series);
-router.use("/api/criteria", Criteria);
-router.use("/api/function-menu", FunctionMenu);
+router.use("/api/admin", AdminWeb);
+router.use("/api/bu", isAuth, BusinessUnit);
+router.use("/api/terms-pp", isAuth, TermsPP);
+router.use("/api/short-brief", isAuth, ShortBrief);
+router.use("/api/series", isAuth, Series);
+router.use("/api/criteria", isAuth, Criteria);
+router.use("/api/function-menu", isAuth, FunctionMenu);
 
 router.use("/api/check", (req, res) => {
   res.status(200).send({

@@ -1,4 +1,5 @@
-import { getRefreshToken, loginAdmin } from "#dep/models/AdminWebModel";
+import { getNewToken, loginAdmin } from "#dep/models/AdminWebModel";
+import { User } from "#dep/types/AuthTypes";
 import { Request, Response } from "express";
 import { Secret, sign } from "jsonwebtoken";
 
@@ -7,7 +8,7 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
   const password = req.body.password;
   try {
     const { data, accessToken } = await loginAdmin(emailOrUname, password);
-    res.status(200).send({
+    return res.status(200).send({
       message: `Success sign in, welcome ${data.fullname}`,
       data: {
         fullname: data.fullname,
@@ -21,19 +22,35 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
     if (error.message === "Invalid Password" || error.message === "User Not Found") {
       return res.status(400).send({ message: error.message });
     }
-    res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
-export const refreshAccessToken = async (req: Request, res: Response) => {
-  const user_id = req.body.user_id;
+export const refreshAccessToken = async (req: Request, res: Response): Promise<any> => {
+  const authHeaders = req.headers.Authorization || req.headers.authorization;
+  if (!authHeaders) {
+    res.status(403).send({
+      message: "Access Denied",
+    });
+  }
+
+  const payload: User = {
+    user_id: req.body.user_id,
+    username: req.body.username,
+    fullname: req.body.fullname,
+    email: req.body.email,
+  };
+
   try {
-    const token = getRefreshToken(user_id);
-    res.status(200).send({
+    const token = await getNewToken(payload);
+    return res.status(200).send({
       access_token: token,
     });
   } catch (error: any) {
-    res.status(500).send({
+    if (error.name === "TokenExpiredError") {
+      return res.status(403).send({ message: "Refresh Token Expired. Logging out." });
+    }
+    return res.status(500).send({
       message: error.message,
     });
   }

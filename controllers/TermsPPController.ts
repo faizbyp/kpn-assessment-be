@@ -1,3 +1,4 @@
+import { BRIEF_ID, PP_ID, TERMS_ID } from "#dep/constant";
 import {
   getShortBrief,
   getTermsPP,
@@ -6,10 +7,6 @@ import {
 } from "#dep/models/TermsPPModel";
 import { BriefRequest, TermsPPRequest } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
-
-const TERMS_ID = "d1d3d3bd-f06c-4dca-90fb-7ef043c6508b";
-const PP_ID = "2b2818b2-e5cd-4d67-a024-9a597b5e3132";
-const BRIEF_ID = "ad21912c-b084-493c-9079-0995388f5458";
 
 export const handleGetTermsPP = async (_req: Request, res: Response) => {
   let data = { terms: "", pp: "" };

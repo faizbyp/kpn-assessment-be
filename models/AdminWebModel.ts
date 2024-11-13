@@ -1,8 +1,10 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
+import { accessExpiry, refreshExpiry } from "#dep/constant";
 import { validatePassword } from "#dep/helper/auth/password";
 import { updateQuery } from "#dep/helper/queryBuilder";
-import { Secret, sign } from "jsonwebtoken";
+import { User } from "#dep/types/AuthTypes";
+import { Secret, sign, verify } from "jsonwebtoken";
 
 export const loginAdmin = async (emailOrUname: string, password: string) => {
   const client = await db.connect();
@@ -25,7 +27,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         user_id: data.id,
       },
       process.env.SECRETJWT as Secret,
-      { expiresIn: "5m" }
+      { expiresIn: accessExpiry }
     );
 
     const refreshToken = sign(
@@ -36,7 +38,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         user_id: data.id,
       },
       process.env.SECRETJWT as Secret,
-      { expiresIn: "6h" }
+      { expiresIn: refreshExpiry }
     );
 
     const [insertToken, valueToken] = updateQuery(
@@ -67,7 +69,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
   }
 };
 
-export const getRefreshToken = async (id: string) => {
+export const getNewToken = async (data: User) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -75,12 +77,26 @@ export const getRefreshToken = async (id: string) => {
       `
       SELECT refresh_token FROM mst_admin_web WHERE id = $1
       `,
-      [id]
+      [data.user_id]
     );
-    await client.query(TRANS.COMMIT);
+    const refreshToken = result.rows[0].refresh_token;
 
-    const refresh_token = result.rows[0].refresh_token;
-    return refresh_token;
+    verify(refreshToken, process.env.SECRETJWT as Secret);
+    // If error, error.name === "TokenExpiredError"
+
+    const newToken = sign(
+      {
+        email: data.email,
+        username: data.username,
+        fullname: data.fullname,
+        user_id: data.user_id,
+      },
+      process.env.SECRETJWT as Secret,
+      { expiresIn: accessExpiry }
+    );
+
+    await client.query(TRANS.COMMIT);
+    return newToken;
   } catch (error) {
     await client.query(TRANS.ROLLBACK);
     console.error(error);
