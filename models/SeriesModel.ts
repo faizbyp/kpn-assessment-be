@@ -1,8 +1,9 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
+import { SeriesRequest } from "#dep/types/MasterDataTypes";
 
-export const createSeries = async (payload: any) => {
+export const createSeries = async (payload: SeriesRequest) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -58,7 +59,7 @@ export const deleteSeries = async (id: string) => {
   }
 };
 
-export const updateSeries = async (payload: any, id: string) => {
+export const updateSeries = async (payload: SeriesRequest, id: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);

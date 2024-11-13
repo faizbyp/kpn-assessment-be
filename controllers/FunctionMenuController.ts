@@ -4,6 +4,7 @@ import {
   getFunctionMenu,
   updateFunctionMenu,
 } from "#dep/models/FunctionMenuModel";
+import { FunctionMenuRequest } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
@@ -23,12 +24,12 @@ export const handleGetFunctionMenu = async (_req: Request, res: Response) => {
 
 export const handleCreateFunctionMenu = async (req: Request, res: Response) => {
   const today = new Date();
-  const payload = {
+  const payload: FunctionMenuRequest = {
     id: uuidv4(),
     fm_code: req.body.fm_code,
     fm_name: req.body.fm_name,
     is_active: req.body.is_active,
-    created_by: req.body.user_id,
+    created_by: req.body.created_by,
     created_date: today,
   };
 

@@ -1,3 +1,5 @@
+import { Criteria } from "#dep/types/MasterDataTypes";
+
 export const insertQuery = (
   table: string,
   values: any,
@@ -83,4 +85,40 @@ export const updateQuery = (
     query += " ;";
   }
   return [query, valueArray];
+};
+
+export const updateCriteriaQuery = (editedCriteria: Criteria[]) => {
+  // Define the table and columns to be updated
+  const tableName = "mst_criteria";
+  const columns = ["criteria_name", "minimum_score", "maximum_score", "updated_by", "updated_date"];
+
+  // Start building the SQL query
+  let query = `UPDATE ${tableName} AS cr SET `;
+
+  // Map columns to the updated values from the temporary table (aliased as "u")
+  query += columns.map((column) => `${column} = u.${column}`).join(", ");
+
+  query += ` FROM (VALUES `;
+
+  // Iterate over each item and build the VALUES part of the query
+  const valuesClause = editedCriteria
+    .map((item) => {
+      return `(
+              '${item.criteria_name}',
+              '${item.minimum_score}', 
+              ${item.maximum_score}, 
+              ${item.updated_by}, 
+              '${item.updated_date}' 
+          )`;
+    })
+    .join(", ");
+
+  // Append VALUES and create an alias for each column
+  query += valuesClause;
+  query += `) AS u(id, ${columns.join(", ")})`;
+
+  // Finalize the query with the join condition
+  query += ` WHERE cr.id = u.id;`;
+
+  return query;
 };

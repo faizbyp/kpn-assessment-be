@@ -1,9 +1,14 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
-import { deleteQuery, insertQuery, updateQuery } from "#dep/helper/queryBuilder";
+import {
+  deleteQuery,
+  insertQuery,
+  updateCriteriaQuery,
+  updateQuery,
+} from "#dep/helper/queryBuilder";
 import { Criteria, CriteriaGroup } from "#dep/types/MasterDataTypes";
 
-export const createCriteria = async (groupPayload: CriteriaGroup, criteriaPayload: Criteria) => {
+export const createCriteria = async (groupPayload: CriteriaGroup, criteriaPayload: Criteria[]) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
@@ -78,20 +83,28 @@ export const deleteCriteria = async (id: string) => {
   }
 };
 
-export const editCriteria = async (groupPayload: CriteriaGroup, criteriaPayload: Criteria) => {
+export const updateCriteria = async (
+  payload: CriteriaGroup,
+  newCriteria: Criteria[],
+  id: string
+) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
 
-    const [groupQ, groupV] = updateQuery(
-      "mst_value",
-      groupPayload,
-      { id: groupPayload.id },
-      "value_name"
-    );
+    // UPDATE CATEGORY
+    const [groupQ, groupV] = updateQuery("mst_value", payload, { id: id }, "value_name");
     const groupResult = await client.query(groupQ, groupV);
-    const [criteriaQ, criteriaV] = updateQuery("mst_criteria", criteriaPayload, "criteria_name");
-    const criteriaResult = await client.query(criteriaQ, criteriaV);
+
+    // DELETE PREV CRITERIA
+    const [deleteCriteriaQ, deleteCriteriaV] = deleteQuery("mst_criteria", {
+      category_fk: id,
+    });
+    await client.query(deleteCriteriaQ, deleteCriteriaV);
+
+    // ADD NEW CRITERIA
+    const [insertCriteriaQ, insertCriteriaV] = insertQuery("mst_criteria", newCriteria);
+    await client.query(insertCriteriaQ, insertCriteriaV);
 
     await client.query(TRANS.COMMIT);
     return groupResult.rows[0].value_name;
@@ -103,3 +116,47 @@ export const editCriteria = async (groupPayload: CriteriaGroup, criteriaPayload:
     client.release();
   }
 };
+
+// export const updateCriteria1 = async (
+//   payload: CriteriaGroup,
+//   addedCriteria: Criteria[],
+//   editedCriteria: Criteria[],
+//   deletedCriteria: Criteria[]
+// ) => {
+//   const client = await db.connect();
+//   try {
+//     await client.query(TRANS.BEGIN);
+
+//     // UPDATE CATEGORY QUERY
+//     const [groupQ, groupV] = updateQuery("mst_value", payload, { id: payload.id }, "value_name");
+
+//     // ADD CRITERIA QUERY
+//     const [insertCriteriaQ, insertCriteriaV] = insertQuery("mst_criteria", addedCriteria);
+
+//     // UPDATE CRITERIA QUERY
+//     const updateCriteriaQ = updateCriteriaQuery(editedCriteria);
+
+//     // DELETE CRITERIA QUERY
+//     const deleteCriteriaQ = `
+//       DELETE FROM mst_criteria
+//       WHERE id IN (${deletedCriteria.map((item) => `'${item}'`).join(", ")})`;
+//     console.log(deleteCriteriaQ);
+
+//     // EXECUTE ALL QUERY PARALLEL
+//     const [groupResult, insertItem, editItem, deleteItem] = await Promise.all([
+//       await client.query(groupQ, groupV),
+//       addedCriteria.length !== 0 ? client.query(insertCriteriaQ, insertCriteriaV) : null,
+//       editedCriteria.length !== 0 ? client.query(updateCriteriaQ) : null,
+//       deletedCriteria.length !== 0 ? client.query(deleteCriteriaQ) : null,
+//     ]);
+
+//     await client.query(TRANS.COMMIT);
+//     return groupResult.rows[0].value_name;
+//   } catch (error) {
+//     console.error(error);
+//     await client.query(TRANS.ROLLBACK);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// };

@@ -21,6 +21,8 @@ export type Criteria = CriteriaRequest & {
   category_fk: string;
   created_by: string;
   created_date: Date;
+  updated_by: string;
+  updated_date: Date;
 };
 
 export type CriteriaGroup = {
@@ -52,4 +54,13 @@ export type BriefRequest = {
   short_brief_name: string;
   updated_by: string;
   updated_date: Date;
+};
+
+// SERIES
+export type SeriesRequest = {
+  id: string;
+  series_name: string;
+  is_active: boolean;
+  created_by: string;
+  created_date: Date;
 };

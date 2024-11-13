@@ -1,12 +1,14 @@
 import { createSeries, deleteSeries, getSeries, updateSeries } from "#dep/models/SeriesModel";
+import { SeriesRequest } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
 export const handleCreateSeries = async (req: Request, res: Response) => {
-  const payload = {
+  const payload: SeriesRequest = {
     id: uuidv4(),
     series_name: req.body.series_name,
     is_active: req.body.is_active,
+    created_by: req.body.created_by,
     created_date: new Date(),
   };
 
@@ -54,8 +56,9 @@ export const handleDeleteSeries = async (req: Request, res: Response) => {
 };
 
 export const handleUpdateSeries = async (req: Request, res: Response) => {
+  const today = new Date();
   const id = req.params.id;
-  const payload = req.body;
+  const payload = { ...req.body, updated_date: today };
   try {
     let result = await updateSeries(payload, id);
     res.status(200).send({
