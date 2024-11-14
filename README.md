@@ -82,32 +82,62 @@ Add more convention as needed and update this guideline based on the it so other
 
 ## Deployment
 
-1. Create Docker Image based on the environment.
+1. Build the frontend repo
+
+```bash
+# kpn-assessment
+npm run build
+```
+
+> This script will automatically put the build dir inside backend dir. Check `vite.config.ts` for the output dir
+
+2. If dev, uncomment the SSL setting in `devSettings` on `connection.ts`.
+
+WB server does not support SSL, but on AWS, we need to set `rejectUnauthorized` to `false`
+
+```ts
+ssl: {
+  rejectUnauthorized: false,
+},
+```
+
+2. Compile the backend Typescript to Javascript
+
+```bash
+# kpn-assessment-be
+npm run build
+```
+
+3. Create Docker Image based on the environment.
 
 - Development
 
 ```bash
-docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:0.0.1beta -f Dockerfile.dev --load .
+docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:x.x.x -f Dockerfile.dev --load .
 ```
 
 > The difference between 2 command above is just the environment variable declared inside the `pm2` command flag
 
-2. Test Locally
+4. Test Locally
 
 - Development
 
 ```bash
-docker run -p 5000:5000 --env-file .env.development faizbyp/kpn-assessment:x.x.x
+docker run -p 5000:5000 4430:443 8080:80 --env-file .env.development faizbyp/kpn-assessment:x.x.x
 ```
 
-3. Push the image to Docker Hub.
+5. Push the image to Docker Hub.
 
-4. Ask the infra team to update the deployment image based on the updated tag on Docker Hub.
+6. Ask the infra team to update the deployment image based on the updated tag on Docker Hub.
 
-5. Update deployment log in `README.md`
+7. Update deployment log in `README.md`
 
 ## Deployment Log
 
-### `0.0.1`
+### `0.0.1beta`
 
 - Deployment for initial showcase to HC
+
+### `0.0.1`
+
+- Master data and auth
