@@ -1,8 +1,14 @@
-const formidable = require("formidable");
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
+import formidable, { Options } from "formidable";
+import { IncomingMessage } from "http";
 
-const parseFormUpload = async (formData, options = {}) => {
+interface FormDataResult {
+  fields: Record<string, any>;
+  files: Record<string, any>;
+}
+
+export const parseFormUpload = async (formData: IncomingMessage, options: Options) => {
   const form = new formidable.IncomingForm({
     uploadDir: options.uploadDir
       ? path.join(__dirname, `../uploads${options.uploadDir}`)
@@ -13,7 +19,7 @@ const parseFormUpload = async (formData, options = {}) => {
   });
 
   try {
-    const { fields, files } = await new Promise((resolve, reject) => {
+    const { fields, files } = await new Promise<FormDataResult>((resolve, reject) => {
       form.parse(formData, (error, fields, files) => {
         if (error) {
           return reject(error);
@@ -29,17 +35,10 @@ const parseFormUpload = async (formData, options = {}) => {
       throw new Error("No file uploaded");
     }
 
-    // Rename the file: timestamp_originalFilename.ext
-    // const oldFilePath = file[0].filepath;
-    // const originalFilename = file[0].originalFilename;
-    // const newFilename = `${Date.now()}_${originalFilename}`;
-    // const newFilePath = path.join(form.uploadDir, newFilename);
-
-    // Rename the file: timestamp_invoice_num.ext
     const oldFilePath = file[0].filepath;
     const extension = path.extname(file[0].originalFilename);
     const newFilename = `${Date.now()}_${payload.invoice_num}${extension}`;
-    const newFilePath = path.join(form.uploadDir, newFilename);
+    const newFilePath = path.join(options.uploadDir ? options.uploadDir : "", newFilename);
 
     await fs.promises.rename(oldFilePath, newFilePath);
 
@@ -49,5 +48,3 @@ const parseFormUpload = async (formData, options = {}) => {
     throw error;
   }
 };
-
-module.exports = { parseFormUpload };
