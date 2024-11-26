@@ -108,3 +108,19 @@ export type QuestionFields = {
   answer_type?: string;
   answer?: Answer[];
 };
+
+export type QuestionResult = {
+  id: string;
+  answer_type: string;
+  created_by: string;
+  created_date: Date;
+  updated_by: string;
+  updated_date: Date;
+  question: {
+    seq: string;
+    layout_type: string;
+    input_text: string;
+    input_image_url: string;
+  };
+  answers: Array<{ text?: string; image_url?: string; point: number }>;
+};

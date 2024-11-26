@@ -31,6 +31,14 @@ const corsOption: CorsOptions = {
   exposedHeaders: ["set-cookie"],
 };
 
+app.use("/api/static", express.static("uploads"));
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/static")) {
+    return res.status(404).sendFile(path.join(__dirname, "uploads", "404.html"));
+  }
+  next();
+});
+
 app.use(credentials);
 app.use(cors(corsOption));
 app.use(express.json());

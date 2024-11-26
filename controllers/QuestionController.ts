@@ -1,10 +1,10 @@
-import { QuestionFields, QuestionRequest } from "#dep/types/MasterDataTypes";
+import { QuestionFields, QuestionRequest, QuestionResult } from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 import * as formidable from "formidable";
-import { createQuestion } from "#dep/models/QuestionModel";
+import { createQuestion, getQuestion, getQuestionById } from "#dep/models/QuestionModel";
 
 export const handleCreateQuestion = async (req: Request, res: Response): Promise<any> => {
   const id = uuidv4();
@@ -96,6 +96,65 @@ export const handleCreateQuestion = async (req: Request, res: Response): Promise
     });
   } catch (error: any) {
     return res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetQuestion = async (_req: Request, res: Response) => {
+  try {
+    let result = await getQuestion();
+    res.status(200).send({
+      message: `Success get question`,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetQuestionById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  try {
+    const result = await getQuestionById(id);
+    const formattedResult: QuestionResult = {
+      id: result.id,
+      answer_type: result.answer_type,
+      created_by: result.created_by,
+      created_date: result.created_date,
+      updated_by: result.updated_by,
+      updated_date: result.updated_date,
+      question: {
+        seq: result.q_seq,
+        layout_type: result.q_layout_type,
+        input_text: result.q_input_text,
+        input_image_url: result.q_input_image_url,
+      },
+      answers: [],
+    };
+
+    ["a", "b", "c", "d", "e"].forEach((choice) => {
+      const textKey = `answer_choice_${choice}_text`;
+      const imageKey = `answer_choice_${choice}_image_url`;
+      const pointKey = `key_answer_point_${choice}`;
+
+      if (result[pointKey]) {
+        formattedResult.answers.push({
+          text: result[textKey],
+          image_url: result[imageKey],
+          point: result[pointKey],
+        });
+      }
+    });
+
+    res.status(200).send({
+      message: `Success get question: ${id}`,
+      data: formattedResult,
+    });
+  } catch (error: any) {
+    res.status(500).send({
       message: error.message,
     });
   }
