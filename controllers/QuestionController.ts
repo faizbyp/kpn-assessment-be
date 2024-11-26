@@ -4,7 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 import * as formidable from "formidable";
-import { createQuestion, getQuestion, getQuestionById } from "#dep/models/QuestionModel";
+import {
+  createQuestion,
+  deleteQuestion,
+  getQuestion,
+  getQuestionById,
+} from "#dep/models/QuestionModel";
 
 export const handleCreateQuestion = async (req: Request, res: Response): Promise<any> => {
   const id = uuidv4();
@@ -152,6 +157,21 @@ export const handleGetQuestionById = async (req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get question: ${id}`,
       data: formattedResult,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleDeleteQuestion = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  try {
+    let result = await deleteQuestion(id);
+    res.status(200).send({
+      message: `Success delete question`,
+      id: id,
     });
   } catch (error: any) {
     res.status(500).send({

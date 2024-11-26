@@ -67,3 +67,22 @@ export const getQuestionById = async (id: string) => {
     client.release();
   }
 };
+
+export const deleteQuestion = async (id: string) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const [q, v] = deleteQuery("mst_question_answer", { id });
+    const result = await client.query(q, v);
+    if (result.rowCount === 0) throw new Error(`ID ${id} not exist`);
+    await client.query(TRANS.COMMIT);
+    console.log(result);
+    return id;
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};

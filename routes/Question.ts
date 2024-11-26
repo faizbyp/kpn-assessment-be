@@ -1,5 +1,6 @@
 import {
   handleCreateQuestion,
+  handleDeleteQuestion,
   handleGetQuestion,
   handleGetQuestionById,
 } from "#dep/controllers/QuestionController";
@@ -9,5 +10,6 @@ const Question = Router();
 Question.post("/", handleCreateQuestion);
 Question.get("/", handleGetQuestion);
 Question.get("/:id", handleGetQuestionById);
+Question.delete("/:id", handleDeleteQuestion);
 
 export default Question;
