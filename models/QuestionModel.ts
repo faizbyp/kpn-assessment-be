@@ -27,7 +27,7 @@ export const getQuestion = async () => {
     const result = await client.query(
       `
       SELECT
-        q.id, q.q_seq, q.q_layout_type, q.q_input_text, q.q_input_image_url, q.answer_type, a.fullname AS created_by
+        q.*, a.fullname AS created_by
       FROM mst_question_answer q
       JOIN mst_admin_web a ON q.created_by = a.id
     `

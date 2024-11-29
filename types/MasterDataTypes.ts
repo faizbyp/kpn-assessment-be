@@ -72,6 +72,12 @@ export type Answer = {
   point: number;
 };
 
+export type AnswerResponse = {
+  text?: string;
+  image_url?: string;
+  point: number;
+};
+
 export type QuestionRequest = {
   id: string;
   q_seq: number;

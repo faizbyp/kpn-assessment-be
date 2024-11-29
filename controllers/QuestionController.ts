@@ -1,4 +1,9 @@
-import { QuestionFields, QuestionRequest, QuestionResult } from "#dep/types/MasterDataTypes";
+import {
+  AnswerResponse,
+  QuestionFields,
+  QuestionRequest,
+  QuestionResult,
+} from "#dep/types/MasterDataTypes";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
@@ -108,10 +113,38 @@ export const handleCreateQuestion = async (req: Request, res: Response): Promise
 
 export const handleGetQuestion = async (_req: Request, res: Response) => {
   try {
-    let result = await getQuestion();
+    const result = await getQuestion();
+    const formattedResult: any[] = result.map((item) => {
+      const answers: AnswerResponse[] = [];
+      ["a", "b", "c", "d", "e"].forEach((choice) => {
+        const textKey = `answer_choice_${choice}_text`;
+        const imageKey = `answer_choice_${choice}_image_url`;
+        const pointKey = `key_answer_point_${choice}`;
+
+        if (item[pointKey]) {
+          answers.push({
+            text: item[textKey],
+            image_url: item[imageKey],
+            point: item[pointKey],
+          });
+        }
+      });
+
+      return {
+        id: item.id,
+        q_seq: item.q_seq,
+        q_layout_type: item.q_layout_type,
+        q_input_text: item.q_input_text,
+        q_input_image_url: item.q_input_image_url,
+        answer_type: item.answer_type,
+        created_by: item.created_by,
+        answers: answers,
+      };
+    });
+
     res.status(200).send({
       message: `Success get question`,
-      data: result,
+      data: formattedResult,
     });
   } catch (error: any) {
     res.status(500).send({
