@@ -157,6 +157,24 @@ export const handleGetQuestionById = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const result = await getQuestionById(id);
+
+    const answers: AnswerResponse[] = [];
+    ["a", "b", "c", "d", "e"].forEach((choice) => {
+      const textKey = `answer_choice_${choice}_text`;
+      const imageKey = `answer_choice_${choice}_image_url`;
+      const pointKey = `key_answer_point_${choice}`;
+
+      if (result[pointKey]) {
+        answers.push({
+          text: result[textKey],
+          image_url: result[imageKey],
+          point: result[pointKey],
+        });
+      }
+    });
+
+    const totalPoints = answers.reduce((acc, answer) => acc + Number(answer.point), 0);
+
     const formattedResult: QuestionResult = {
       id: result.id,
       answer_type: result.answer_type,
@@ -164,28 +182,15 @@ export const handleGetQuestionById = async (req: Request, res: Response) => {
       created_date: result.created_date,
       updated_by: result.updated_by,
       updated_date: result.updated_date,
+      total_points: totalPoints,
       question: {
         seq: result.q_seq,
         layout_type: result.q_layout_type,
         input_text: result.q_input_text,
         input_image_url: result.q_input_image_url,
       },
-      answers: [],
+      answers: answers,
     };
-
-    ["a", "b", "c", "d", "e"].forEach((choice) => {
-      const textKey = `answer_choice_${choice}_text`;
-      const imageKey = `answer_choice_${choice}_image_url`;
-      const pointKey = `key_answer_point_${choice}`;
-
-      if (result[pointKey]) {
-        formattedResult.answers.push({
-          text: result[textKey],
-          image_url: result[imageKey],
-          point: result[pointKey],
-        });
-      }
-    });
 
     res.status(200).send({
       message: `Success get question: ${id}`,

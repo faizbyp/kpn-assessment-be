@@ -122,6 +122,7 @@ export type QuestionResult = {
   created_date: Date;
   updated_by: string;
   updated_date: Date;
+  total_points: number;
   question: {
     seq: string;
     layout_type: string;
