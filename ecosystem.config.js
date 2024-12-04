@@ -3,7 +3,6 @@ module.exports = {
     {
       name: "kpn-assessment",
       script: "index.js",
-      exp_backoff_restart_delay: 100,
     },
   ],
 };
