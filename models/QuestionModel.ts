@@ -20,6 +20,23 @@ export const createQuestion = async (payload: QuestionRequest) => {
   }
 };
 
+export const updateQuestion = async (payload: QuestionRequest, id: string) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const [q, v] = updateQuery("mst_question_answer", payload, { id: id }, "id");
+    const result = await client.query(q, v);
+    await client.query(TRANS.COMMIT);
+    return result.rows[0].id;
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 export const getQuestion = async () => {
   const client = await db.connect();
   try {
