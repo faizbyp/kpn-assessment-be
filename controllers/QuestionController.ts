@@ -312,6 +312,11 @@ export const handleGetQuestionById = async (req: Request, res: Response) => {
 export const handleDeleteQuestion = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
+    const dir = path.join(__dirname, `../uploads/question/${id}`);
+    if (fs.existsSync(dir)) {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+
     let result = await deleteQuestion(id);
     res.status(200).send({
       message: `Success delete question`,
