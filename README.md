@@ -123,7 +123,7 @@ docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:x.x.x -f Do
 - Development
 
 ```bash
-docker run -p 5000:5000 4430:443 8080:80 --env-file .env.development faizbyp/kpn-assessment:x.x.x
+docker run -p 5000:5000 -p 4430:443 -p 8080:80 --env-file .env.development faizbyp/kpn-assessment:x.x.x
 ```
 
 5. Push the image to Docker Hub.
@@ -141,3 +141,11 @@ docker run -p 5000:5000 4430:443 8080:80 --env-file .env.development faizbyp/kpn
 ### `0.0.1`
 
 - Master data and auth
+
+### `0.0.2`
+
+- Create and delete question
+
+### `0.0.3`
+
+- Edit question
