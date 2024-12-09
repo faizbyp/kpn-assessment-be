@@ -11,6 +11,7 @@ import Criteria from "./Criteria";
 import FunctionMenu from "./FunctionMenu";
 import { isAuth } from "#dep/middleware/auth";
 import Question from "./Question";
+import Page from "./Page";
 
 //#depusing router
 // router.use('/api/<endpoint>', <controller>)
@@ -23,6 +24,7 @@ router.use("/api/series", isAuth, Series);
 router.use("/api/criteria", isAuth, Criteria);
 router.use("/api/function-menu", isAuth, FunctionMenu);
 router.use("/api/question", isAuth, Question);
+router.use("/api/page", isAuth, Page);
 
 router.use("/api/check", (req, res) => {
   res.status(200).send({
