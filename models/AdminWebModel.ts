@@ -105,3 +105,49 @@ export const getNewToken = async (data: User) => {
     client.release();
   }
 };
+
+export const getAllAdmin = async () => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const { rows } = await client.query(
+      `
+      SELECT a.username, a.fullname, a.email, a.is_active, r.role_name
+      FROM mst_admin_web a
+      LEFT JOIN mst_role r ON a.role_id = r.id
+      `
+    );
+
+    await client.query(TRANS.COMMIT);
+    return rows;
+  } catch (error) {
+    await client.query(TRANS.ROLLBACK);
+    console.error(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const createAdmin = async () => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+    const { rows } = await client.query(
+      `
+      SELECT a.username, a.fullname, a.email, a.is_active, r.role_name
+      FROM mst_admin_web a
+      LEFT JOIN mst_role r ON a.role_id = r.id
+      `
+    );
+
+    await client.query(TRANS.COMMIT);
+    return rows;
+  } catch (error) {
+    await client.query(TRANS.ROLLBACK);
+    console.error(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};

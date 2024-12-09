@@ -1,4 +1,4 @@
-import { getNewToken, loginAdmin } from "#dep/models/AdminWebModel";
+import { getAllAdmin, getNewToken, loginAdmin } from "#dep/models/AdminWebModel";
 import { User } from "#dep/types/AuthTypes";
 import { Request, Response } from "express";
 import { Secret, sign } from "jsonwebtoken";
@@ -51,6 +51,20 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<a
       return res.status(403).send({ message: "Refresh Token Expired. Logging out." });
     }
     return res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetAllAdmin = async (_req: Request, res: Response) => {
+  try {
+    let result = await getAllAdmin();
+    res.status(200).send({
+      message: `Success get admin accounts`,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
       message: error.message,
     });
   }
