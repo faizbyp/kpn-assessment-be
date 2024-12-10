@@ -141,6 +141,14 @@ export const createAdmin = async (payload: any) => {
   try {
     await client.query(TRANS.BEGIN);
 
+    const checkUserExist = await client.query(
+      "SELECT * FROM mst_admin_web WHERE username = $1 OR email = $2",
+      [payload.username, payload.email]
+    );
+    if (checkUserExist.rows.length > 0) {
+      throw new Error("User already exist");
+    }
+
     const [q, v] = insertQuery("mst_admin_web", payload, "id, role_id");
     const { rows } = await client.query(q, v);
 
@@ -238,6 +246,9 @@ export const resetPassword = async (newPass: string, email: string) => {
       "username"
     );
     await client.query(updatePassQuery, updatePassValue);
+
+    const [cleanQuery, cleanValue] = deleteQuery("otp_trans", { email: email });
+    await client.query(cleanQuery, cleanValue);
 
     await client.query(TRANS.COMMIT);
   } catch (error) {
