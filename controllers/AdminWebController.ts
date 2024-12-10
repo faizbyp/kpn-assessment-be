@@ -2,6 +2,7 @@ import { validateOTP } from "#dep/helper/auth/OTP";
 import { hashPassword } from "#dep/helper/auth/password";
 import {
   createAdmin,
+  getAdminById,
   getAllAdmin,
   getNewToken,
   getRole,
@@ -212,5 +213,21 @@ export const handleResetPassword = async (req: Request, res: Response): Promise<
     } else {
       return res.status(500).send(error.message);
     }
+  }
+};
+
+export const handleGetAdminById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  try {
+    let result = await getAdminById(id);
+    res.status(200).send({
+      message: `Success get admin`,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
   }
 };

@@ -1,5 +1,6 @@
 import {
   handleCreateAdmin,
+  handleGetAdminById,
   handleGetAllAdmin,
   handleGetRole,
   handleLoginAdmin,
@@ -19,5 +20,6 @@ AdminWeb.post("/reset-pass/verify", handleVerifyResetPassword);
 AdminWeb.patch("/reset-pass/reset", handleResetPassword);
 AdminWeb.get("/", handleGetAllAdmin);
 AdminWeb.get("/role", handleGetRole);
+AdminWeb.get("/:id", handleGetAdminById);
 
 export default AdminWeb;
