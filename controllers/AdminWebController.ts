@@ -1,3 +1,4 @@
+import { validateOTP } from "#dep/helper/auth/OTP";
 import { hashPassword } from "#dep/helper/auth/password";
 import {
   createAdmin,
@@ -5,11 +6,13 @@ import {
   getNewToken,
   getRole,
   loginAdmin,
+  reqResetPassword,
+  resetPassword,
 } from "#dep/models/AdminWebModel";
 import { Emailer } from "#dep/services/mail/Emailer";
 import { User } from "#dep/types/AdminTypes";
 import { Request, Response } from "express";
-import { Secret, sign } from "jsonwebtoken";
+import { Secret, sign, verify } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 export const handleLoginAdmin = async (req: Request, res: Response): Promise<any> => {
@@ -133,5 +136,81 @@ export const handleCreateAdmin = async (req: Request, res: Response) => {
     res.status(500).send({
       message: error.message,
     });
+  }
+};
+
+export const handleReqResetPassword = async (req: Request, res: Response): Promise<any> => {
+  const email = req.body.email;
+  if (!email) {
+    return res.status(400).send({
+      message: "Email is required",
+    });
+  }
+
+  try {
+    await reqResetPassword(email);
+
+    return res.status(200).send({
+      message: "OTP sent, please check your email address",
+    });
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleVerifyResetPassword = async (req: Request, res: Response): Promise<any> => {
+  const email = req.body.email;
+  const otpInput = req.body.otpInput;
+  if (!email || !otpInput) {
+    return res.status(400).send({
+      message: "Bad Request",
+    });
+  }
+
+  try {
+    await validateOTP(otpInput, email);
+    const sessionToken = sign({ email: email }, process.env.SECRETJWT as Secret, {
+      expiresIn: "5m",
+    });
+    res.cookie("resetpwdSess", sessionToken, {
+      httpOnly: true,
+      sameSite: false,
+      secure: true,
+    });
+
+    return res.status(200).send({
+      message: "OTP Verified",
+    });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleResetPassword = async (req: Request, res: Response): Promise<any> => {
+  const session = req.cookies.resetpwdSess;
+  const newPass = req.body.newPass;
+  const email = req.body.email;
+
+  try {
+    verify(session, process.env.SECRETJWT as Secret);
+    await resetPassword(newPass, email);
+
+    return res.status(200).send({
+      message: "Password has reset",
+    });
+  } catch (error: any) {
+    if (error?.name == "TokenExpiredError") {
+      return res.status(403).send("Session Expired");
+    } else if (error?.name == "JsonWebTokenError") {
+      return res.status(403).send("Invalid Session");
+    } else {
+      return res.status(500).send(error.message);
+    }
   }
 };

@@ -3,7 +3,7 @@ import { compareSync, genSaltSync, hashSync } from "bcryptjs";
 import { generate } from "otp-generator";
 import { deleteQuery } from "../queryBuilder";
 
-const createOTP = () => {
+export const createOTP = () => {
   try {
     const OTP = generate(6, {
       digits: true,
@@ -22,7 +22,7 @@ const createOTP = () => {
   }
 };
 
-const validateOTP = async (otpInput: string, email: string) => {
+export const validateOTP = async (otpInput: string, email: string) => {
   const client = await db.connect();
   try {
     const getOTP = await client.query("SELECT * from otp_trans where email = $1", [email]);
@@ -37,8 +37,6 @@ const validateOTP = async (otpInput: string, email: string) => {
     if (now > otpTimeLimit) {
       const [cleanOtp, otpValue] = deleteQuery("otp_trans", { email: email });
       await client.query(cleanOtp, otpValue);
-      const [cleanTemp, tempValue] = deleteQuery("mst_user_temp", { email: email });
-      await client.query(cleanTemp, tempValue);
       throw new Error("OTP Expired: Please request again");
     }
     const compareOTP = compareSync(otpInput, otpHashed);

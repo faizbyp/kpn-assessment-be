@@ -77,14 +77,15 @@ export class Emailer {
     return this.sendEmail(emailTarget, subject, html);
   }
 
-  async anotherMethod(data: any, emailTarget: string) {
-    const title = "KPN Assessment";
+  async otpResetPass(otpCode: string | Date, emailTarget: string) {
+    const title = "Reset Password Request";
     const html = emailTemplate(
       title,
       `
-      <p>This is your OTP Code</p>
+      <p>This is your OTP Code:</p>
+      <h2>${otpCode}</h2>
       <p>This code will expire after 5 minutes. Please insert the code before expiry time.</p>
-      <p>Ignore this email if you didn't register to KPN Petty Cash System.</p>
+      <p>Ignore this email if you didn't request to change password.</p>
       `
     );
 
