@@ -1,7 +1,16 @@
-import { getAllAdmin, getNewToken, loginAdmin } from "#dep/models/AdminWebModel";
-import { User } from "#dep/types/AuthTypes";
+import { hashPassword } from "#dep/helper/auth/password";
+import {
+  createAdmin,
+  getAllAdmin,
+  getNewToken,
+  getRole,
+  loginAdmin,
+} from "#dep/models/AdminWebModel";
+import { Emailer } from "#dep/services/mail/Emailer";
+import { User } from "#dep/types/AdminTypes";
 import { Request, Response } from "express";
 import { Secret, sign } from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 export const handleLoginAdmin = async (req: Request, res: Response): Promise<any> => {
   const emailOrUname = req.body.username;
@@ -62,6 +71,63 @@ export const handleGetAllAdmin = async (_req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get admin accounts`,
       data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetRole = async (_req: Request, res: Response) => {
+  try {
+    let result = await getRole();
+    res.status(200).send({
+      message: `Success get role`,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleCreateAdmin = async (req: Request, res: Response) => {
+  const today = new Date();
+  const data = req.body;
+  const password =
+    (process.env.DEFAULT_PASS as string) + Math.floor(1000 + Math.random() * 9000).toString();
+  const hashed = await hashPassword(password);
+
+  const payload = {
+    id: uuidv4(),
+    fullname: data.fullname,
+    username: data.username,
+    email: data.email,
+    password: hashed,
+    role_id: data.role_id,
+    is_active: data.is_active,
+    created_by: data.created_by,
+    created_date: today,
+  };
+
+  try {
+    let result = await createAdmin(payload);
+
+    const emailData = {
+      fullname: data.fullname,
+      username: data.username,
+      password: password,
+      role: result.role,
+    };
+
+    const Email = new Emailer();
+    await Email.newAccount(emailData, data.email);
+
+    res.status(200).send({
+      message: `Success create admin`,
+      id: result,
     });
   } catch (error: any) {
     res.status(500).send({

@@ -2,8 +2,8 @@ import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 import { accessExpiry, refreshExpiry } from "#dep/constant";
 import { validatePassword } from "#dep/helper/auth/password";
-import { updateQuery } from "#dep/helper/queryBuilder";
-import { User } from "#dep/types/AuthTypes";
+import { insertQuery, updateQuery } from "#dep/helper/queryBuilder";
+import { User } from "#dep/types/AdminTypes";
 import { Secret, sign, verify } from "jsonwebtoken";
 
 export const loginAdmin = async (emailOrUname: string, password: string) => {
@@ -110,6 +110,7 @@ export const getAllAdmin = async () => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
+
     const { rows } = await client.query(
       `
       SELECT a.username, a.fullname, a.email, a.is_active, r.role_name
@@ -129,15 +130,39 @@ export const getAllAdmin = async () => {
   }
 };
 
-export const createAdmin = async () => {
+export const createAdmin = async (payload: any) => {
+  const client = await db.connect();
+  try {
+    await client.query(TRANS.BEGIN);
+
+    const [q, v] = insertQuery("mst_admin_web", payload, "id, role_id");
+    const { rows } = await client.query(q, v);
+
+    const { rows: role } = await client.query(
+      `
+      SELECT role_name FROM mst_role WHERE id = $1
+      `,
+      [rows[0].role_id]
+    );
+
+    await client.query(TRANS.COMMIT);
+    return { id: rows[0].id, role: role[0].role_name };
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const getRole = async () => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
     const { rows } = await client.query(
       `
-      SELECT a.username, a.fullname, a.email, a.is_active, r.role_name
-      FROM mst_admin_web a
-      LEFT JOIN mst_role r ON a.role_id = r.id
+      SELECT id, role_name FROM mst_role;
       `
     );
 

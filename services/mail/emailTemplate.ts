@@ -1,13 +1,13 @@
 // SEND BODY TO THIS FUNCTION PARAMETER
 
-function emailTemplate(slot) {
+export function emailTemplate(title: string, body: string) {
   return `
   <!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Petty Cash KPN</title>
+      <title>KPN Assessment - ${title}</title>
       <style>
         body {
           margin: 0;
@@ -17,7 +17,7 @@ function emailTemplate(slot) {
         }
 
         h1 {
-          color: #0297b5;
+          color: #b91f27;
         }
 
         .container {
@@ -31,7 +31,7 @@ function emailTemplate(slot) {
         }
 
         .header {
-          background-color: #0297b5;
+          background-color: #b91f27;
           color: #f8f9fa;
           padding: 10px 20px;
           border-radius: 8px 8px 0 0;
@@ -65,7 +65,7 @@ function emailTemplate(slot) {
         }
 
         .btn-primary {
-          background-color: #0297b5;
+          background-color: #b91f27;
           color: #ffffff !important;
         }
 
@@ -75,7 +75,7 @@ function emailTemplate(slot) {
         }
 
         .btn-danger {
-          background-color: #dc3545;
+          background-color: #5d0f0f;
           color: #ffffff !important;
         }
       </style>
@@ -83,10 +83,11 @@ function emailTemplate(slot) {
     <body>
       <div class="container">
         <div class="header">
-          <h2>KPN Corp Petty Cash System</h2>
+          <h2>KPN Assessment</h2>
         </div>
         <div class="body">
-          ${slot}
+          <h1>${title}</h1>
+          ${body}
         </div>
         <div class="footer">
           <p>&copy; 2024 KPN Corp. All Rights Reserved.</p>
@@ -99,4 +100,30 @@ function emailTemplate(slot) {
   `;
 }
 
-module.exports = emailTemplate;
+export function generateTable(rows: { label: string; value: string }[]): string {
+  const tableRows = rows
+    .map(
+      (row) => `
+        <tr>
+          <td style="width:25%">${row.label}</td>
+          <td>${row.value}</td>
+        </tr>
+      `
+    )
+    .join("");
+
+  return `
+    <table style="width: 100%">
+      ${tableRows}
+    </table>
+  `;
+}
+
+export function generateButton(
+  href: string,
+  title: string,
+  variant: "primary" | "secondary" | "danger" = "secondary"
+): string {
+  const buttonClass = `btn btn-${variant}`;
+  return `<a href="${href}" class="${buttonClass}">${title}</a>`;
+}
