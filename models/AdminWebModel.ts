@@ -22,13 +22,20 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
     }
     const data = checkUserData.rows[0];
 
+    const permission = await client.query(
+      `
+        SELECT page_id, fcreate, fread, fupdate, fdelete
+        FROM mst_page_access
+        WHERE role_id = $1
+      `,
+      [data.role_id]
+    );
+
     const accessToken = sign(
       {
-        email: data.email,
-        username: data.username,
-        fullname: data.fullname,
         user_id: data.id,
         role_id: data.role_id,
+        permission: permission.rows,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: accessExpiry }
@@ -36,11 +43,9 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
 
     const refreshToken = sign(
       {
-        email: data.email,
-        username: data.username,
-        fullname: data.fullname,
         user_id: data.id,
         role_id: data.role_id,
+        permission: permission.rows,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: refreshExpiry }
@@ -90,13 +95,20 @@ export const getNewToken = async (data: User) => {
     verify(refreshToken, process.env.SECRETJWT as Secret);
     // If error, error.name === "TokenExpiredError"
 
+    const permission = await client.query(
+      `
+        SELECT page_id, fcreate, fread, fupdate, fdelete
+        FROM mst_page_access
+        WHERE role_id = $1
+      `,
+      [data.role_id]
+    );
+
     const newToken = sign(
       {
-        email: data.email,
-        username: data.username,
-        fullname: data.fullname,
         user_id: data.user_id,
         role_id: data.role_id,
+        permission: permission.rows,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: accessExpiry }

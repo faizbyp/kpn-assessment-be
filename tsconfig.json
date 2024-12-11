@@ -12,7 +12,10 @@
       ]
     },
     "moduleResolution": "node",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "typeRoots": [
+      "./types"
+    ]
   },
   "include": [
     "./**/*.ts"

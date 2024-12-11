@@ -4,12 +4,13 @@ import {
   handleGetFunctionMenu,
   handleUpdateFunctionMenu,
 } from "#dep/controllers/FunctionMenuController";
+import { checkPermission } from "#dep/middleware/auth";
 import { Router } from "express";
 const FunctionMenu = Router();
 
-FunctionMenu.get("/", handleGetFunctionMenu);
-FunctionMenu.post("/", handleCreateFunctionMenu);
-FunctionMenu.delete("/:id", handleDeleteFunctionMenu);
-FunctionMenu.patch("/:id", handleUpdateFunctionMenu);
+FunctionMenu.get("/", checkPermission("fread", 6), handleGetFunctionMenu);
+FunctionMenu.post("/", checkPermission("fcreate", 6), handleCreateFunctionMenu);
+FunctionMenu.delete("/:id", checkPermission("fdelete", 6), handleDeleteFunctionMenu);
+FunctionMenu.patch("/:id", checkPermission("fupdate", 6), handleUpdateFunctionMenu);
 
 export default FunctionMenu;
