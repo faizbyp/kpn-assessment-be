@@ -1,9 +1,25 @@
 import { getPage } from "#dep/models/PageModel";
 import { Request, Response } from "express";
+import { Secret, verify } from "jsonwebtoken";
 
-export const handleGetPage = async (_req: Request, res: Response) => {
+export const handleGetPage = async (req: Request, res: Response) => {
+  const authHeaders =
+    (req.headers.Authorization as string) || (req.headers.authorization as string);
+  let token = "";
+  if (authHeaders) token = authHeaders.split(" ")[1];
+  if (!authHeaders) {
+    res.status(403).send({
+      message: "Access Denied",
+    });
+  }
+
   try {
-    const result = await getPage();
+    const decoded: any = verify(token, process.env.SECRETJWT as Secret);
+    const roleId = decoded.role_id;
+    console.log(decoded);
+    console.log("id", roleId);
+
+    const result = await getPage(roleId);
     const groupedData = result.reduce((acc, item) => {
       const key = item.subheader || "Others"; // Use "Others" for null subheaders
       if (!acc[key]) {
@@ -15,6 +31,10 @@ export const handleGetPage = async (_req: Request, res: Response) => {
         icon: item.icon,
         is_active: item.is_active,
         position: item.position,
+        fcreate: item.fcreate,
+        fread: item.fread,
+        fupdate: item.fupdate,
+        fdelete: item.fdelete,
       });
       return acc;
     }, {});

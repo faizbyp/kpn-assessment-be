@@ -28,6 +28,7 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
         username: data.username,
         email: data.email,
         user_id: data.id,
+        role_id: data.role_id,
         access_token: accessToken,
       },
     });
@@ -48,10 +49,11 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<a
   }
 
   const payload: User = {
-    user_id: req.body.user_id,
     username: req.body.username,
     fullname: req.body.fullname,
     email: req.body.email,
+    user_id: req.body.user_id,
+    role_id: req.body.role_id,
   };
 
   try {

@@ -28,6 +28,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         username: data.username,
         fullname: data.fullname,
         user_id: data.id,
+        role_id: data.role_id,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: accessExpiry }
@@ -39,6 +40,7 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
         username: data.username,
         fullname: data.fullname,
         user_id: data.id,
+        role_id: data.role_id,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: refreshExpiry }
@@ -94,6 +96,7 @@ export const getNewToken = async (data: User) => {
         username: data.username,
         fullname: data.fullname,
         user_id: data.user_id,
+        role_id: data.role_id,
       },
       process.env.SECRETJWT as Secret,
       { expiresIn: accessExpiry }
