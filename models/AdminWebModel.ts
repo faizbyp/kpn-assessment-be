@@ -311,10 +311,11 @@ export const getPermission = async () => {
     await client.query(TRANS.BEGIN);
     const { rows } = await client.query(
       `
-      SELECT rl.*, ac.menu_id, ac.fcreate, ac.fread, ac.fupdate, ac.fdelete, pg.name AS menu_name 
+      SELECT rl.*, ad.fullname AS created_by, ac.menu_id, ac.fcreate, ac.fread, ac.fupdate, ac.fdelete, pg.name AS menu_name 
       FROM mst_role rl
       LEFT JOIN mst_menu_access ac ON rl.id = ac.role_id
       LEFT JOIN mst_menu pg ON ac.menu_id = pg.id
+      LEFT JOIN mst_admin_web ad ON rl.created_by = ad.id
       `
     );
 
@@ -329,25 +330,23 @@ export const getPermission = async () => {
   }
 };
 
-export const getMenu = async () => {
+export const createRole = async (payload: any, accessPayload: any) => {
   const client = await db.connect();
 
   try {
     await client.query(TRANS.BEGIN);
 
-    const { rows } = await client.query(
-      `
-      SELECT a.id, a.username, a.fullname, a.email, a.is_active, r.role_name
-      FROM mst_admin_web a
-      LEFT JOIN mst_role r ON a.role_id = r.id
-      `
-    );
+    const [q, v] = insertQuery("mst_role", payload, "id");
+    const { rows } = await client.query(q, v);
+
+    const [accessQ, accessV] = insertQuery("mst_menu_access", accessPayload);
+    await client.query(accessQ, accessV);
 
     await client.query(TRANS.COMMIT);
-    return rows;
+    return rows[0].id;
   } catch (error) {
-    await client.query(TRANS.ROLLBACK);
     console.error(error);
+    await client.query(TRANS.ROLLBACK);
     throw error;
   } finally {
     client.release();

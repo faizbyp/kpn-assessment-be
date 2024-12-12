@@ -1,13 +1,13 @@
-import { getMenu } from "#dep/models/MenuModel";
+import { getAdminMenu, getAllMenu } from "#dep/models/MenuModel";
 import { Request, Response } from "express";
 import { Secret, verify } from "jsonwebtoken";
 
-export const handleGetMenu = async (req: Request, res: Response) => {
+export const handleGetAdminMenu = async (req: Request, res: Response) => {
   const roleId = req.userDecode?.role_id;
 
   try {
     if (!roleId) throw new Error("Role ID not provided");
-    const result = await getMenu(roleId);
+    const result = await getAdminMenu(roleId);
     const groupedData = result.reduce((acc, item) => {
       const key = item.subheader || "Others"; // Use "Others" for null subheaders
       if (!acc[key]) {
@@ -44,6 +44,21 @@ export const handleGetMenu = async (req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get menu`,
       data: formattedResult,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetAllMenu = async (req: Request, res: Response) => {
+  try {
+    const result = await getAllMenu();
+
+    res.status(200).send({
+      message: `Success get all menu`,
+      data: result,
     });
   } catch (error: any) {
     res.status(500).send({

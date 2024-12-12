@@ -2,6 +2,7 @@ import { validateOTP } from "#dep/helper/auth/OTP";
 import { hashPassword } from "#dep/helper/auth/password";
 import {
   createAdmin,
+  createRole,
   getAdminById,
   getAllAdmin,
   getNewToken,
@@ -259,6 +260,38 @@ export const handleGetPermission = async (_req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get role permission`,
       data: formattedResult,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleCreateRole = async (req: Request, res: Response) => {
+  const today = new Date();
+  const id = uuidv4();
+  const data = req.body;
+
+  const payload = {
+    id: id,
+    role_name: data.role_name,
+    is_active: data.is_active,
+    created_by: data.created_by,
+    created_date: today,
+  };
+
+  const accessPayload = data.permission.map((perm: any) => ({
+    ...perm,
+    role_id: id,
+  }));
+
+  try {
+    let result = await createRole(payload, accessPayload);
+
+    res.status(200).send({
+      message: `Success create role`,
+      id: result,
     });
   } catch (error: any) {
     res.status(500).send({
