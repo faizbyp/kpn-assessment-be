@@ -5,6 +5,7 @@ import {
   getAdminById,
   getAllAdmin,
   getNewToken,
+  getPermission,
   getRole,
   loginAdmin,
   reqResetPassword,
@@ -29,6 +30,7 @@ export const handleLoginAdmin = async (req: Request, res: Response): Promise<any
         email: data.email,
         user_id: data.id,
         role_id: data.role_id,
+        permission: data.permission,
         access_token: accessToken,
       },
     });
@@ -226,6 +228,37 @@ export const handleGetAdminById = async (req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get admin`,
       data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetPermission = async (_req: Request, res: Response) => {
+  try {
+    let result = await getPermission();
+
+    const formattedResult = result.reduce((acc, role) => {
+      const { role_name, fcreate, fread, fupdate, fdelete, menu_id, menu_name, ...rest } = role;
+
+      const existingRole = acc.find((r: any) => r.role_name === role_name);
+      if (existingRole) {
+        existingRole.permission.push({ menu_name, menu_id, fcreate, fread, fupdate, fdelete });
+      } else {
+        acc.push({
+          ...rest,
+          role_name,
+          permission: [{ menu_name, menu_id, fcreate, fread, fupdate, fdelete }],
+        });
+      }
+      return acc;
+    }, []);
+
+    res.status(200).send({
+      message: `Success get role permission`,
+      data: formattedResult,
     });
   } catch (error: any) {
     res.status(500).send({

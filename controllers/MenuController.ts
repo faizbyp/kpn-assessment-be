@@ -1,13 +1,13 @@
-import { getPage } from "#dep/models/PageModel";
+import { getMenu } from "#dep/models/MenuModel";
 import { Request, Response } from "express";
 import { Secret, verify } from "jsonwebtoken";
 
-export const handleGetPage = async (req: Request, res: Response) => {
+export const handleGetMenu = async (req: Request, res: Response) => {
   const roleId = req.userDecode?.role_id;
 
   try {
     if (!roleId) throw new Error("Role ID not provided");
-    const result = await getPage(roleId);
+    const result = await getMenu(roleId);
     const groupedData = result.reduce((acc, item) => {
       const key = item.subheader || "Others"; // Use "Others" for null subheaders
       if (!acc[key]) {
@@ -42,7 +42,7 @@ export const handleGetPage = async (req: Request, res: Response) => {
     });
 
     res.status(200).send({
-      message: `Success get pages`,
+      message: `Success get menu`,
       data: formattedResult,
     });
   } catch (error: any) {

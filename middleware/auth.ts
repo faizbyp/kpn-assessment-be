@@ -30,15 +30,15 @@ export const isAuth = (req: Request, res: Response, next: NextFunction): any => 
 };
 
 export const checkPermission =
-  (action: "fcreate" | "fread" | "fupdate" | "fdelete", pageId: number) =>
+  (action: "fcreate" | "fread" | "fupdate" | "fdelete", menuId: number) =>
   (req: Request, res: Response, next: NextFunction): any => {
     const permission = req.userDecode?.permission;
 
     if (!permission) throw new Error("Permission not provided");
 
-    const pagePermission = permission.find((perm: any) => Number(perm.page_id) === pageId);
+    const menuPermission = permission.find((perm: any) => Number(perm.menu_id) === menuId);
 
-    if (pagePermission && pagePermission[action]) {
+    if (menuPermission && menuPermission[action]) {
       return next();
     }
     return res.status(403).send({ message: "Forbidden" });

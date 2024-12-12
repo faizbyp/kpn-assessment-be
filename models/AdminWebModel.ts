@@ -24,12 +24,14 @@ export const loginAdmin = async (emailOrUname: string, password: string) => {
 
     const permission = await client.query(
       `
-        SELECT page_id, fcreate, fread, fupdate, fdelete
-        FROM mst_page_access
+        SELECT menu_id, fcreate, fread, fupdate, fdelete
+        FROM mst_menu_access
         WHERE role_id = $1
       `,
       [data.role_id]
     );
+
+    data.permission = permission.rows;
 
     const accessToken = sign(
       {
@@ -97,8 +99,8 @@ export const getNewToken = async (data: User) => {
 
     const permission = await client.query(
       `
-        SELECT page_id, fcreate, fread, fupdate, fdelete
-        FROM mst_page_access
+        SELECT menu_id, fcreate, fread, fupdate, fdelete
+        FROM mst_menu_access
         WHERE role_id = $1
       `,
       [data.role_id]
@@ -296,6 +298,56 @@ export const resetPassword = async (newPass: string, email: string) => {
   } catch (error) {
     await client.query(TRANS.ROLLBACK);
     console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const getPermission = async () => {
+  const client = await db.connect();
+
+  try {
+    await client.query(TRANS.BEGIN);
+    const { rows } = await client.query(
+      `
+      SELECT rl.*, ac.menu_id, ac.fcreate, ac.fread, ac.fupdate, ac.fdelete, pg.name AS menu_name 
+      FROM mst_role rl
+      LEFT JOIN mst_menu_access ac ON rl.id = ac.role_id
+      LEFT JOIN mst_menu pg ON ac.menu_id = pg.id
+      `
+    );
+
+    await client.query(TRANS.COMMIT);
+    return rows;
+  } catch (error) {
+    await client.query(TRANS.ROLLBACK);
+    console.error(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const getMenu = async () => {
+  const client = await db.connect();
+
+  try {
+    await client.query(TRANS.BEGIN);
+
+    const { rows } = await client.query(
+      `
+      SELECT a.id, a.username, a.fullname, a.email, a.is_active, r.role_name
+      FROM mst_admin_web a
+      LEFT JOIN mst_role r ON a.role_id = r.id
+      `
+    );
+
+    await client.query(TRANS.COMMIT);
+    return rows;
+  } catch (error) {
+    await client.query(TRANS.ROLLBACK);
+    console.error(error);
     throw error;
   } finally {
     client.release();

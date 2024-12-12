@@ -1,14 +1,14 @@
 import { db } from "#dep/config/connection";
 import { TRANSACTION as TRANS } from "#dep/config/transaction";
 
-export const getPage = async (roleId: string) => {
+export const getMenu = async (roleId: string) => {
   const client = await db.connect();
   try {
     await client.query(TRANS.BEGIN);
     const result = await client.query(
       `
-        SELECT * FROM mst_page_access ac
-        LEFT JOIN mst_page pg ON ac.page_id = pg.id
+        SELECT * FROM mst_menu_access ac
+        LEFT JOIN mst_menu pg ON ac.menu_id = pg.id
         WHERE ac.role_id = $1
         ORDER BY pg.position
     `,

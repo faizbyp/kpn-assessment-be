@@ -10,7 +10,7 @@ export type TokenPayload = {
   user_id: string;
   role_id: string;
   permission: Array<{
-    page_id: number;
+    menu_id: number;
     fcreate: boolean;
     fread: boolean;
     fupdate: boolean;
