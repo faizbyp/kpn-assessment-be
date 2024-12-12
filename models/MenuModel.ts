@@ -10,6 +10,7 @@ export const getAdminMenu = async (roleId: string) => {
         SELECT * FROM mst_menu_access ac
         LEFT JOIN mst_menu pg ON ac.menu_id = pg.id
         WHERE ac.role_id = $1
+        AND (ac.fcreate = true OR ac.fread = true OR ac.fupdate = true OR ac.fdelete = true)
         ORDER BY pg.position
     `,
       [roleId]
