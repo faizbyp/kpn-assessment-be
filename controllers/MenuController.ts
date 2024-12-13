@@ -41,6 +41,11 @@ export const handleGetAdminMenu = async (req: Request, res: Response) => {
       return group;
     });
 
+    // ADD DASHBOARD
+    formattedResult.unshift({
+      items: [{ name: "Dashboard", path: "/admin", icon: "Home" }],
+    });
+
     res.status(200).send({
       message: `Success get menu`,
       data: formattedResult,
