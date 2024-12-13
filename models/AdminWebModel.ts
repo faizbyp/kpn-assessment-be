@@ -304,7 +304,7 @@ export const resetPassword = async (newPass: string, email: string) => {
   }
 };
 
-export const getPermission = async () => {
+export const getPermission = async (id: string | null = null) => {
   const client = await db.connect();
 
   try {
@@ -316,7 +316,9 @@ export const getPermission = async () => {
       LEFT JOIN mst_menu_access ac ON rl.id = ac.role_id
       LEFT JOIN mst_menu pg ON ac.menu_id = pg.id
       LEFT JOIN mst_admin_web ad ON rl.created_by = ad.id
-      `
+      WHERE (rl.id = $1 OR $1 IS NULL)
+      `,
+      [id]
     );
 
     await client.query(TRANS.COMMIT);
@@ -341,6 +343,32 @@ export const createRole = async (payload: any, accessPayload: any) => {
 
     const [accessQ, accessV] = insertQuery("mst_menu_access", accessPayload);
     await client.query(accessQ, accessV);
+
+    await client.query(TRANS.COMMIT);
+    return rows[0].id;
+  } catch (error) {
+    console.error(error);
+    await client.query(TRANS.ROLLBACK);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const updateRole = async (id: string, payload: any, permPayload: any) => {
+  const client = await db.connect();
+
+  try {
+    await client.query(TRANS.BEGIN);
+
+    const [queryInsertRole, valueInsertRole] = updateQuery("mst_role", payload, { id }, "id");
+    const { rows } = await client.query(queryInsertRole, valueInsertRole);
+
+    const [queryDeleteAccess, valueDeleteAccess] = deleteQuery("mst_menu_access", { role_id: id });
+    await client.query(queryDeleteAccess, valueDeleteAccess);
+
+    const [queryInsertAccess, valueInsertAccess] = insertQuery("mst_menu_access", permPayload);
+    await client.query(queryInsertAccess, valueInsertAccess);
 
     await client.query(TRANS.COMMIT);
     return rows[0].id;

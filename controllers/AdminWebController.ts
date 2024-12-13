@@ -11,6 +11,7 @@ import {
   loginAdmin,
   reqResetPassword,
   resetPassword,
+  updateRole,
 } from "#dep/models/AdminWebModel";
 import { Emailer } from "#dep/services/mail/Emailer";
 import { User } from "#dep/types/AdminTypes";
@@ -94,6 +95,38 @@ export const handleGetRole = async (_req: Request, res: Response) => {
     res.status(200).send({
       message: `Success get role`,
       data: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleGetRoleById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  try {
+    let result = await getPermission(id);
+
+    const formattedResult = result.reduce((acc, role) => {
+      const { role_name, fcreate, fread, fupdate, fdelete, menu_id, menu_name, ...rest } = role;
+
+      const existingRole = acc.find((r: any) => r.role_name === role_name);
+      if (existingRole) {
+        existingRole.permission.push({ menu_name, menu_id, fcreate, fread, fupdate, fdelete });
+      } else {
+        acc.push({
+          ...rest,
+          role_name,
+          permission: [{ menu_name, menu_id, fcreate, fread, fupdate, fdelete }],
+        });
+      }
+      return acc;
+    }, []);
+
+    res.status(200).send({
+      message: `Success get role ${result[0].role_name}`,
+      data: formattedResult[0],
     });
   } catch (error: any) {
     res.status(500).send({
@@ -291,6 +324,38 @@ export const handleCreateRole = async (req: Request, res: Response) => {
 
     res.status(200).send({
       message: `Success create role`,
+      id: result,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
+export const handleUpdateRole = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const today = new Date();
+  const data = req.body;
+
+  const payload = {
+    role_name: data.role_name,
+    updated_date: today,
+    updated_by: data.update_by,
+    is_active: data.is_active,
+  };
+
+  const permPayload = data.permission.map(({ menu_name, ...perm }: { menu_name: any }) => ({
+    ...perm,
+    role_id: id,
+    updated_date: today,
+    updated_by: data.update_by,
+  }));
+
+  try {
+    let result = await updateRole(id, payload, permPayload);
+    res.status(200).send({
+      message: `Success update role`,
       id: result,
     });
   } catch (error: any) {
