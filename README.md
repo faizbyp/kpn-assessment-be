@@ -101,14 +101,14 @@ ssl: {
 },
 ```
 
-2. Compile the backend Typescript to Javascript
+3. Compile the backend Typescript to Javascript
 
 ```bash
 # kpn-assessment-be
 npm run build
 ```
 
-3. Create Docker Image based on the environment.
+4. Create Docker Image based on the environment.
 
 - Development
 
@@ -118,7 +118,7 @@ docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:x.x.x -f Do
 
 > The difference between 2 command above is just the environment variable declared inside the `pm2` command flag
 
-4. Test Locally
+5. Test Locally
 
 - Development
 
@@ -126,11 +126,11 @@ docker buildx build --platform linux/arm64 -t faizbyp/kpn-assessment:x.x.x -f Do
 docker run -p 5000:5000 -p 4430:443 -p 8080:80 --env-file .env.development faizbyp/kpn-assessment:x.x.x
 ```
 
-5. Push the image to Docker Hub.
+6. Push the image to Docker Hub.
 
-6. Ask the infra team to update the deployment image based on the updated tag on Docker Hub.
+7. Ask the infra team to update the deployment image based on the updated tag on Docker Hub.
 
-7. Update deployment log in `README.md`
+8. Update deployment log in `README.md`
 
 ## Deployment Log
 
@@ -149,3 +149,17 @@ docker run -p 5000:5000 -p 4430:443 -p 8080:80 --env-file .env.development faizb
 ### `0.0.3`
 
 - Edit question
+
+### `0.0.4`
+
+> Skipped on commit history
+
+- Create admin
+- Reset password
+- Dynamic menu from DB
+
+### `0.0.5`
+
+- Menu permission
+- Create role
+- edit role
