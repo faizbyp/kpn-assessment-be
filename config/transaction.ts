@@ -1,0 +1,5 @@
+export const TRANSACTION = {
+  BEGIN: "BEGIN;",
+  COMMIT: "COMMIT;",
+  ROLLBACK: "ROLLBACK;",
+};
